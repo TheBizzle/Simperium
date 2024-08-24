@@ -7,7 +7,7 @@ A NetLogo-based combat simulator for Twilight Imperium (4th Edition).
 ## What's unsupported?
 
   * Some expansion content (like mechs)
-  * Some factions that do weird things
+  * The Yin faction
   * Action Cards
   * Promissory Notes
   * And more
