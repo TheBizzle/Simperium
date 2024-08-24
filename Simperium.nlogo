@@ -555,7 +555,7 @@ to do-invasion
     let matriarch-troops ([(ifelse-value (my-faction = "naalu" and any? my-flagships) [ my-fighters ] [ (turtle-set) ])] of attacker)
     let attacking-troops (turtle-set ([my-infantry] of attacker) matriarch-troops)
 
-    let hel-titans       ([(ifelse-value (my-faction = "ui" and any? my-pds) [ my-pds ] [ (turtle-set) ])] of defender)
+    let hel-titans       ([(ifelse-value (my-faction = "ui" and any? my-local-pds) [ my-local-pds ] [ (turtle-set) ])] of defender)
     let defending-troops (turtle-set ([my-infantry] of defender) hel-titans)
 
     do-space-cannon-defense attacking-troops
@@ -567,7 +567,7 @@ to do-invasion
     if (not any? defending-troops with [not destroyed?]) [
       ifelse (any? [my-infantry] of attacker) [
         ask defender [
-          ask my-pds with [ label = "local" ] [ go-bye-bye "overrun in invasion" ]
+          ask my-local-pds [ go-bye-bye "overrun in invasion" ]
           set defeated? true
         ]
       ] [
@@ -1504,8 +1504,11 @@ to-report my-pds
   report my-living-units with [unit-type = "pds"]
 end
 
-to-report anti-fighter-units
+to-report my-local-pds
+  report my-pds with [label = "local"]
+end
 
+to-report anti-fighter-units
   report (turtle-set my-destroyers)
 end
 
