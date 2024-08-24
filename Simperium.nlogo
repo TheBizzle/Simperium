@@ -173,7 +173,6 @@ to combat
   ; NOT IMPLEMENTED: Hacan "Wrath of Kenara" flagship ==> After you roll a die during space combat in this system, you may spend 1 trade good to apply +1 to the result.
   ; NOT IMPLEMENTED: Empyrean "Dynamo" flagship ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit.
   ; NOT IMPLEMENTED: Mahact "Arvicon Rex" flagship ==> During combat against an opponent whose command token is not in your fleet pool, apply +2 to the results of this unit's combat rolls
-  ; NOT IMPLEMENTED: Nekro "Alastor" flagship ==> At the start of a space combat, choose any number of your ground forces in this system to participate in that combat as if they were ships.
   ; NOT IMPLEMENTED: Jol-Nar "JNS Hylarim" flagship ==> When making a combat roll for this ship, each result of a 9 or 10, before applying modifiers, produces 2 additional hits.
   ; NOT IMPLEMENTED: Winnu "Salai Sai Corian" flagship ==> When this unit makes a combat roll, it rolls a number of dice equal to the number of your opponent's non-fighter ships in this system.
   ; NOT IMPLEMENTED: Yin "Indoctrination" ability and "Devotion" ability and "Impulse Core" yellow tech and their "Van Hauge" flagship
@@ -1444,11 +1443,22 @@ to-report my-living-units
 end
 
 to-report my-fleet
-  report my-living-units with [unit-type != "fighter" and unit-type != "infantry" and unit-type != "pds"]
+  ; Nekro flagship "The Alastor" ==> At the start of a space combat, choose any number of your ground forces in this system to participate in that combat as if they were ships
+  ifelse ((my-faction = "nekro") and any? my-flagships) [
+    report my-living-units with [unit-type != "fighter" and unit-type != "pds"]
+  ] [
+    report my-living-units with [unit-type != "fighter" and unit-type != "infantry" and unit-type != "pds"]
+  ]
 end
 
 to-report my-ships
-  report my-living-units with [unit-type != "infantry" and unit-type != "pds"]
+  ; Nekro flagship "The Alastor" ==> At the start of a space combat, choose any number of your ground forces in this system to participate in that combat as if they were ships
+  ifelse ((my-faction = "nekro") and any? my-flagships) [
+    report my-living-units with [unit-type != "pds"]
+  ] [
+    report my-living-units with [unit-type != "infantry" and unit-type != "pds"]
+  ]
+
 end
 
 to-report my-flagships
@@ -1571,7 +1581,7 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
+"arborec" "creuss" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
 6
 
 CHOOSER
@@ -1581,7 +1591,7 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
+"arborec" "creuss" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
 3
 
 SWITCH
@@ -2460,8 +2470,6 @@ HORIZONTAL
     * Flagship: Disable other players' SUSTAIN DAMAGE
   * nomad
     * Upgradable flagships
-  * nekro
-    * Flagship: Can treat my infantry as ships during space combat
   * winnu
     * Flagship: When this ship makes a combat roll, it rolls a total of N dice, where N is the number of enemy non-fighters in-system
   * yin
