@@ -174,7 +174,6 @@ end
 to combat
 
   ; NOT IMPLEMENTED: Empyrean "Dynamo" flagship ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit.
-  ; NOT IMPLEMENTED: Mahact "Arvicon Rex" flagship ==> During combat against an opponent whose command token is not in your fleet pool, apply +2 to the results of this unit's combat rolls
   ; NOT IMPLEMENTED: Jol-Nar "JNS Hylarim" flagship ==> When making a combat roll for this ship, each result of a 9 or 10, before applying modifiers, produces 2 additional hits.
   ; NOT IMPLEMENTED: Yin "Indoctrination" ability and "Devotion" ability and "Impulse Core" yellow tech and their "Van Hauge" flagship
 
@@ -885,7 +884,11 @@ to-report combat-roll
   ; Naaz-Rokha ability "Supercharge" ==> At the start of a combat round, you may exhaust this card to apply +1 to the result of each of your unit's combat rolls during this combat round
   let supercharge (ifelse-value (faction = "naaz-rokha") [1] [0])
 
-  report roll-d10 + (cmorran-norr + unrelenting + fragile + supercharge)
+  ; Mahact flagship "Arvicon Rex" ==> During combat against an opponent whose command token is not in your fleet pool, apply +2 to the results of this unit's combat rolls
+  ; Such tokens are obtained through the Mahact "Edict" ability, after defeating your opponent in any combat
+  let arvicon-rex (ifelse-value ((faction = "mahact") and (unit-type = "flagship") and (((my-player = attacker) and have-edict-token-1?) or ((my-player = defender) and have-edict-token-2?))) [2] [0])
+
+  report roll-d10 + (cmorran-norr + unrelenting + fragile + supercharge + arvicon-rex)
 
 end
 
@@ -1604,8 +1607,8 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-7
+"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+8
 
 CHOOSER
 1600
@@ -1614,7 +1617,7 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
 4
 
 SWITCH
@@ -2479,6 +2482,28 @@ initial-trade-goods-2
 NIL
 HORIZONTAL
 
+SWITCH
+17
+1005
+222
+1038
+have-edict-token-1?
+have-edict-token-1?
+1
+1
+-1000
+
+SWITCH
+1600
+1010
+1800
+1043
+have-edict-token-2?
+have-edict-token-2?
+1
+1
+-1000
+
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -2515,8 +2540,6 @@ HORIZONTAL
     * Flagship: Can spend 2 Influence to repair any damaged unit
   * jol-nar
     * Flagship: Each unmodified 9 or 10 on a combat roll for this ship produces +2 hits
-  * mahact
-    * Flagship: +2 to flagship's combat rolls against opponent who you've defeated in combat
   * mentak
     * Flagship: Disable other players' SUSTAIN DAMAGE
   * nomad
