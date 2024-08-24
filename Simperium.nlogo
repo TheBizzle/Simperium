@@ -920,7 +920,7 @@ to hit [hitter target]
     set label     hit-count
 
     ask target [
-      ifelse hp - 1 <= 0 [
+      ifelse ((hp - 1) <= 0) [
         go-bye-bye (word "hit by " [unit-type] of hitter " " [who] of hitter)
       ] [
         sustain-damage
@@ -936,7 +936,7 @@ to spooky-hit [p target reason]
   output-print (word "HIT: " (ifelse-value (p != attacker) [ "attacker's" ] [ "defender's" ]) " " [unit-type] of target " " [who] of target " (" reason ")")
 
   ask target [
-    ifelse hp - 1 <= 0 [
+    ifelse ((hp - 1) <= 0) [
       go-bye-bye (word "hit by " reason)
     ] [
       sustain-damage
