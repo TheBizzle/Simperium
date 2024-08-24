@@ -7,6 +7,7 @@ breed [damage-markers damage-marker]
 
 players-own [
   defeated?
+  influence-bundles
   my-faction
   my-units
   trade-goods
@@ -36,8 +37,9 @@ to setup
 
   create-players 1 [
 
-    set my-faction  attacking-faction
-    set trade-goods initial-trade-goods-1
+    set my-faction        attacking-faction
+    set trade-goods       initial-trade-goods-1
+    set influence-bundles initial-influence-bundles-1
 
     mk-flagships    flagships-1    false                   h1 c1
     mk-warsuns      warsuns-1      false                   h1 c1
@@ -65,8 +67,9 @@ to setup
 
     let w ifelse-value ((count units) > 0) [ (max [who] of units) ] [ -1 ]
 
-    set my-faction  defending-faction
-    set trade-goods initial-trade-goods-2
+    set my-faction        defending-faction
+    set trade-goods       initial-trade-goods-2
+    set influence-bundles initial-influence-bundles-2
 
     mk-flagships    flagships-2    false                   h2 c2
     mk-warsuns      warsuns-2      false                   h2 c2
@@ -173,7 +176,6 @@ end
 
 to combat
 
-  ; NOT IMPLEMENTED: Empyrean "Dynamo" flagship ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit.
   ; NOT IMPLEMENTED: Yin "Indoctrination" ability and "Devotion" ability and "Impulse Core" yellow tech and their "Van Hauge" flagship
 
   ; Turn order, from FFG: https://www.reddit.com/r/twilightimperium/comments/7w7v6r/ti4_rules_question_does_antifighter_barrage/
@@ -945,13 +947,63 @@ to spooky-hit [p target reason]
 end
 
 to sustain-damage
-  hatch-damage-markers 1 [
-    set label ""
-    set shape "face sad"
-    set color grey
-    set size  (size / 3)
+
+  ; Empyrean flagship "Dynamo" ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit
+  ifelse ([(my-faction = "empyrean") and (any? my-flagships) and ((sum influence-bundles) >= 2)] of my-player) [
+
+    ; Try to spend their Influence efficiently on this
+    ask my-player [
+
+      let sorted (sort influence-bundles)
+
+      ifelse (member? 2 sorted) [
+        set influence-bundles (remove-item (position 2 sorted) sorted) ; Without a 2
+      ] [
+
+        let num-1s (reduce [ [x y] -> ifelse-value (y = 1) [ x + 1 ] [ x ] ] sorted)
+
+        ifelse (num-1s >= 2) [
+          let without-1-1  (remove-item (position 1 sorted) sorted)
+          let without-2-1s (remove-item (position 1 without-1-1) without-1-1)
+          set influence-bundles without-2-1s ; Without 2 1s
+        ] [
+
+          let removed-item? false
+
+          let new-guy []
+
+          foreach (range length sorted) [
+            i ->
+              let x (item i sorted)
+              ifelse ((not removed-item?) and (i >= 3)) [
+                set removed-item? true
+              ] [
+                set new-guy (lput x new-guy)
+              ]
+          ]
+
+          set influence-bundles new-guy ; Without the smallest number greater than 2
+
+        ]
+      ]
+
+    ]
+
+    output-print (word "EMPYREAN DYNAMO REPAIRED A HIT TO " unit-type " " who)
+
+  ] [
+
+    hatch-damage-markers 1 [
+      set label ""
+      set shape "face sad"
+      set color grey
+      set size  (size / 3)
+    ]
+
+    set damaged? true
+
   ]
-  set damaged? true
+
 end
 
 to go-bye-bye [reason]
@@ -1616,8 +1668,8 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-9
+"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+10
 
 CHOOSER
 1600
@@ -1626,8 +1678,8 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-5
+"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+6
 
 SWITCH
 22
@@ -2513,6 +2565,28 @@ have-edict-token-2?
 1
 -1000
 
+INPUTBOX
+1600
+930
+1800
+1000
+initial-influence-bundles-2
+[]
+1
+0
+String (reporter)
+
+INPUTBOX
+20
+925
+220
+995
+initial-influence-bundles-1
+[]
+1
+0
+String (reporter)
+
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -2545,8 +2619,6 @@ have-edict-token-2?
   * argent
     * Raid Formation: If AFB has hits with no fighters to target, apply them to ships with SUSTAIN DAMAGE
     * Upgraded Destroyers: 9s and 10s on AFB attacks also destroy 1 enemy infantry
-  * empyrean
-    * Flagship: Can spend 2 Influence to repair any damaged unit
   * mentak
     * Flagship: Disable other players' SUSTAIN DAMAGE
   * nomad
