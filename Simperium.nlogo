@@ -176,7 +176,6 @@ to combat
   ; NOT IMPLEMENTED: Empyrean "Dynamo" flagship ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit.
   ; NOT IMPLEMENTED: Mahact "Arvicon Rex" flagship ==> During combat against an opponent whose command token is not in your fleet pool, apply +2 to the results of this unit's combat rolls
   ; NOT IMPLEMENTED: Jol-Nar "JNS Hylarim" flagship ==> When making a combat roll for this ship, each result of a 9 or 10, before applying modifiers, produces 2 additional hits.
-  ; NOT IMPLEMENTED: Winnu "Salai Sai Corian" flagship ==> When this unit makes a combat roll, it rolls a number of dice equal to the number of your opponent's non-fighter ships in this system.
   ; NOT IMPLEMENTED: Yin "Indoctrination" ability and "Devotion" ability and "Impulse Core" yellow tech and their "Van Hauge" flagship
 
   ; Turn order, from FFG: https://www.reddit.com/r/twilightimperium/comments/7w7v6r/ti4_rules_question_does_antifighter_barrage/
@@ -1102,11 +1101,21 @@ end
 to-report combat-shots
 
   if unit-type = "flagship" [
-    ifelse member? ([my-faction] of my-player) (list "creuss" "winnu") [
+
+    let f ([my-faction] of my-player)
+
+    if (f = "creuss") [
       report 1
-    ] [
-      report 2
     ]
+
+    ; Winnu flagship "Salai Sai Corian" ==> When this unit makes a combat roll, it rolls a number of dice equal to the number of your opponent's non-fighter ships in this system
+    if (f = "winnu") [
+      let other-player (ifelse-value (my-player = attacker) [ defender ] [ attacker ])
+      report (count [my-fleet] of other-player)
+    ]
+
+    report 2
+
   ]
 
   if unit-type = "warsun" [
@@ -1595,7 +1604,7 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
+"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
 7
 
 CHOOSER
@@ -1605,7 +1614,7 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
+"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
 4
 
 SWITCH
@@ -2512,8 +2521,6 @@ HORIZONTAL
     * Flagship: Disable other players' SUSTAIN DAMAGE
   * nomad
     * Upgradable flagships
-  * winnu
-    * Flagship: When this ship makes a combat roll, it rolls a total of N dice, where N is the number of enemy non-fighters in-system
   * yin
     * Flagship: When destroyed, destroy all ships in the system
     * Indoctrination: Spend 2 Influence to replace an enemy infantry with one of my own
