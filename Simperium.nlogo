@@ -1367,7 +1367,7 @@ to-report max-hp
   let opponent (ifelse-value (my-player = attacker) [ defender ] [ attacker ])
 
   if (unit-type = "pds") [
-    ifelse (f = "ai") [ ; UI Hel-Titans are not ships, so this needs to come before the Mentak check
+    ifelse (f = "ui") [ ; UI Hel-Titans are not ships, so this needs to come before the Mentak check
       report 2
     ] [
       report 0
@@ -1383,7 +1383,7 @@ to-report max-hp
        (unit-type = "warsun") or
        (unit-type = "dreadnought") or
        (unit-type = "carrier" and (f = "sol")) or
-       (unit-type = "cruiser" and upgraded? and (f = "ai"))) [
+       (unit-type = "cruiser" and upgraded? and (f = "ui"))) [
     report 2
   ]
 
