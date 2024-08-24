@@ -9,6 +9,7 @@ players-own [
   defeated?
   my-faction
   my-units
+  trade-goods
 ]
 
 units-own [
@@ -35,7 +36,8 @@ to setup
 
   create-players 1 [
 
-    set my-faction attacking-faction
+    set my-faction  attacking-faction
+    set trade-goods initial-trade-goods-1
 
     mk-flagships    flagships-1    false                   h1 c1
     mk-warsuns      warsuns-1      false                   h1 c1
@@ -63,7 +65,8 @@ to setup
 
     let w ifelse-value ((count units) > 0) [ (max [who] of units) ] [ -1 ]
 
-    set my-faction defending-faction
+    set my-faction  defending-faction
+    set trade-goods initial-trade-goods-2
 
     mk-flagships    flagships-2    false                   h2 c2
     mk-warsuns      warsuns-2      false                   h2 c2
@@ -170,7 +173,6 @@ end
 
 to combat
 
-  ; NOT IMPLEMENTED: Hacan "Wrath of Kenara" flagship ==> After you roll a die during space combat in this system, you may spend 1 trade good to apply +1 to the result.
   ; NOT IMPLEMENTED: Empyrean "Dynamo" flagship ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit.
   ; NOT IMPLEMENTED: Mahact "Arvicon Rex" flagship ==> During combat against an opponent whose command token is not in your fleet pool, apply +2 to the results of this unit's combat rolls
   ; NOT IMPLEMENTED: Jol-Nar "JNS Hylarim" flagship ==> When making a combat roll for this ship, each result of a 9 or 10, before applying modifiers, produces 2 additional hits.
@@ -405,7 +407,7 @@ to-report afb-hits
       let goal  (item 1 triple)
       let tries (item 2 triple)
       foreach (range tries) [
-        if (non-combat-roll >= goal) [
+        if (kenarified-roll non-combat-roll goal) [
           set my-hits (fput ship my-hits)
         ]
       ]
@@ -467,7 +469,7 @@ to-report space-combat-hits
       let tries (item 2 triple)
       foreach (range tries) [
         ask ship [
-          if (combat-roll >= goal) [
+          if (kenarified-roll combat-roll goal) [
             set my-hits (fput ship my-hits)
           ]
         ]
@@ -476,6 +478,17 @@ to-report space-combat-hits
 
   report my-hits
 
+end
+
+; Hacan flagship "Wrath of Kenara" ==> After you roll a die during a space combat in this system, you may spend 1 trade good to apply +1 to the result
+; And https://www.tirules.com/F_hacan says that it can only be used once per roll
+to-report kenarified-roll [roll-result goal]
+  ifelse ([(my-faction = "hacan") and (any? my-flagships) and ((roll-result + 1) = goal) and (trade-goods > 0)] of my-player) [
+    ask my-player [ set trade-goods (trade-goods - 1) ]
+    report true
+  ] [
+    report (roll-result >= goal)
+  ]
 end
 
 to assign-space-combat-hits [hits actor actee nes?]
@@ -1582,8 +1595,8 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
-6
+"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
+7
 
 CHOOSER
 1600
@@ -1592,8 +1605,8 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
-3
+"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "xxcha" "yssaril"
+4
 
 SWITCH
 22
@@ -2359,9 +2372,9 @@ non-euclidean-shielding-2?
 
 SWITCH
 1600
-970
+1130
 1800
-1003
+1163
 magen-defense-grid?
 magen-defense-grid?
 1
@@ -2370,9 +2383,9 @@ magen-defense-grid?
 
 SWITCH
 20
-965
+1125
 220
-998
+1158
 l4-disruptors?
 l4-disruptors?
 1
@@ -2414,13 +2427,43 @@ valkyrie-particle-weave-2?
 
 SLIDER
 1600
-890
+1090
 1800
-923
+1123
 adjacent-pds
 adjacent-pds
 0
 6
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+20
+885
+220
+918
+initial-trade-goods-1
+initial-trade-goods-1
+0
+100
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1600
+890
+1800
+923
+initial-trade-goods-2
+initial-trade-goods-2
+0
+100
 0.0
 1
 1
@@ -2461,8 +2504,6 @@ HORIZONTAL
     * Upgraded Destroyers: 9s and 10s on AFB attacks also destroy 1 enemy infantry
   * empyrean
     * Flagship: Can spend 2 Influence to repair any damaged unit
-  * hacan
-    * Flagship: Spend 1 Trade Good for +1 on dice roll
   * jol-nar
     * Flagship: Each unmodified 9 or 10 on a combat roll for this ship produces +2 hits
   * mahact
