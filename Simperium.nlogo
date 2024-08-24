@@ -41,7 +41,7 @@ to setup
     set trade-goods       initial-trade-goods-1
     set influence-bundles initial-influence-bundles-1
 
-    mk-flagships    flagships-1    false                   h1 c1
+    mk-flagships    flagships-1    upgraded-flagship-1?    h1 c1
     mk-warsuns      warsuns-1      false                   h1 c1
     mk-dreadnoughts dreadnoughts-1 upgraded-dreadnought-1? h1 c1
     mk-carriers     carriers-1     upgraded-carrier-1?     h1 c1
@@ -71,7 +71,7 @@ to setup
     set trade-goods       initial-trade-goods-2
     set influence-bundles initial-influence-bundles-2
 
-    mk-flagships    flagships-2    false                   h2 c2
+    mk-flagships    flagships-2    upgraded-flagship-2?    h2 c2
     mk-warsuns      warsuns-2      false                   h2 c2
     mk-dreadnoughts dreadnoughts-2 upgraded-dreadnought-2? h2 c2
     mk-carriers     carriers-2     upgraded-carrier-2?     h2 c2
@@ -1199,8 +1199,16 @@ to-report combat-value
       report 9
     ]
 
-    if member? f (list "arborec" "argent" "keleres" "hacan" "mentak" "nomad" "ui" "winnu" "xxcha") [
+    if member? f (list "arborec" "argent" "keleres" "hacan" "mentak" "ui" "winnu" "xxcha") [
       report 7
+    ]
+
+    if member? f (list "nomad") [
+      ifelse upgraded? [
+        report 5
+      ] [
+        report 7
+      ]
     ]
 
     if member? f (list "sardakk" "jol-nar") [
@@ -1437,7 +1445,13 @@ to-report capacity
 
   if (unit-type = "flagship") [
 
-    ; NOT IMPLEMENTED: Faction Nomad, which can have upgraded flagships
+    if member? faction (list "nomad") [
+      ifelse upgraded? [
+        report 6
+      ] [
+        report 3
+      ]
+    ]
 
     if member? faction (list "sol") [
       report 12
@@ -1670,23 +1684,23 @@ ticks
 30.0
 
 CHOOSER
-25
-485
-225
-530
+510
+490
+635
+535
 attacking-faction
 attacking-faction
-"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "nomad" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
 11
 
 CHOOSER
-1600
+1190
 490
-1800
+1315
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "nomad" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
 6
 
 SWITCH
@@ -2595,6 +2609,28 @@ initial-influence-bundles-1
 0
 String (reporter)
 
+SWITCH
+27
+470
+227
+503
+upgraded-flagship-1?
+upgraded-flagship-1?
+1
+1
+-1000
+
+SWITCH
+1600
+475
+1800
+508
+upgraded-flagship-2?
+upgraded-flagship-2?
+1
+1
+-1000
+
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -2627,8 +2663,6 @@ String (reporter)
   * argent
     * Raid Formation: If AFB has hits with no fighters to target, apply them to ships with SUSTAIN DAMAGE
     * Upgraded Destroyers: 9s and 10s on AFB attacks also destroy 1 enemy infantry
-  * nomad
-    * Upgradable flagships
   * yin
     * Flagship: When destroyed, destroy all ships in the system
     * Indoctrination: Spend 2 Influence to replace an enemy infantry with one of my own
