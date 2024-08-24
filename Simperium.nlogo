@@ -2529,7 +2529,7 @@ have-edict-token-2?
 
 ### Unimplemented features
 
-    * Promissory notes
+  * Promissory notes
 
 ### Unimplemented factions
 
