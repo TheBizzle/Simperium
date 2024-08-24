@@ -551,20 +551,13 @@ to do-invasion
     set game-state "Tactical Action @4.1: Bombardment"
     do-bombardment
 
-    ; Naalu flagship "Matriarch" ==> During an invasion in this system, you may commit fighters to planets as if they were ground forces. When combat ends, return those units to the space area.
-    let matriarch-troops ([(ifelse-value (my-faction = "naalu" and any? my-flagships) [ my-fighters ] [ (turtle-set) ])] of attacker)
-    let attacking-troops (turtle-set ([my-infantry] of attacker) matriarch-troops)
+    do-space-cannon-defense ([my-ground-forces] of attacker)
 
-    let hel-titans       ([(ifelse-value (my-faction = "ui" and any? my-local-pds) [ my-local-pds ] [ (turtle-set) ])] of defender)
-    let defending-troops (turtle-set ([my-infantry] of defender) hel-titans)
-
-    do-space-cannon-defense attacking-troops
-
-    while [any? attacking-troops with [not destroyed?] and any? defending-troops with [not destroyed?]] [
-      do-ground-combat attacking-troops defending-troops attack-blocked?
+    while [any? ([my-ground-forces] of attacker) and any? ([my-ground-forces] of defender)] [
+      do-ground-combat attack-blocked?
     ]
 
-    if (not any? defending-troops with [not destroyed?]) [
+    if (not any? ([my-ground-forces] of defender)) [
       ifelse (any? [my-infantry] of attacker) [
         ask defender [
           ask my-local-pds [ go-bye-bye "overrun in invasion" ]
@@ -577,7 +570,7 @@ to do-invasion
       ]
     ]
 
-    if ((not any? attacking-troops with [not destroyed?]) and (not any? [my-ships] of defender)) [
+    if ((not any? ([my-ground-forces] of attacker)) and (not any? [my-ships] of defender)) [
       ask players [
         set defeated? true
       ]
@@ -628,8 +621,8 @@ to do-bombardment
       foreach hits [
         hitter ->
           ask defender [
-            if (any? my-infantry) [
-              hit hitter (one-of my-infantry)
+            if (any? my-ground-forces) [
+              hit hitter (one-of my-ground-forces)
             ]
           ]
       ]
@@ -709,18 +702,15 @@ to do-space-cannon-defense [attacking-troops]
 
 end
 
-to do-ground-combat [a-troops d-troops attack-blocked?]
+to do-ground-combat [attack-blocked?]
 
   output-print "BEGIN GROUND COMBAT ROUND"
 
   set game-state "Tactical Action @4.4: Ground Combat"
   output-print "BEGIN GROUND COMBAT ROLLS"
 
-  let attacking-troops (a-troops with [not destroyed?])
-  let defending-troops (d-troops with [not destroyed?])
-
-  let init-attacker-hits (ifelse-value (not attack-blocked?) [ ground-combat-hits attacking-troops ] [ [] ])
-  let init-defender-hits (                                     ground-combat-hits defending-troops         )
+  let init-attacker-hits (ifelse-value (not attack-blocked?) [ ground-combat-hits attacker ] [ [] ])
+  let init-defender-hits (                                     ground-combat-hits defender         )
 
   let vpw1? valkyrie-particle-weave-1?
   let vpw2? valkyrie-particle-weave-2?
@@ -734,8 +724,8 @@ to do-ground-combat [a-troops d-troops attack-blocked?]
   set game-state "Tactical Action @4.4b: Assign Hits"
   output-print "BEGIN GROUND COMBAT HITS"
 
-  assign-ground-combat-hits attacker-hits defending-troops attacker
-  assign-ground-combat-hits defender-hits attacking-troops defender
+  assign-ground-combat-hits attacker-hits attacker defender
+  assign-ground-combat-hits defender-hits defender attacker
 
   output-print "END GROUND COMBAT HITS"
 
@@ -750,11 +740,11 @@ to do-ground-combat [a-troops d-troops attack-blocked?]
 
 end
 
-to-report ground-combat-hits [troops]
+to-report ground-combat-hits [actor]
 
   let my-hits []
 
-  let triples ([ (list self combat-value combat-shots) ] of (turtle-set troops))
+  let triples ([ (list self combat-value combat-shots) ] of ([my-ground-forces] of actor))
 
   foreach triples [
     triple ->
@@ -775,10 +765,10 @@ to-report ground-combat-hits [troops]
 
 end
 
-to assign-ground-combat-hits [hits hittees actor]
+to assign-ground-combat-hits [hits actor actee]
   foreach hits [
     hitter ->
-      let options (hittees with [not destroyed?])
+      let options ([my-ground-forces] of actee)
       ifelse (any? options) [
         let soaker (optimal-soaker options)
         ifelse (not is-player? hitter) [
@@ -1499,6 +1489,22 @@ end
 
 to-report my-local-pds
   report my-pds with [label = "local"]
+end
+
+to-report my-ground-forces
+
+  ; Naalu flagship "Matriarch" ==> During an invasion in this system, you may commit fighters to planets as if they were ground forces. When combat ends, return those units to the space area.
+  if (self = attacker and my-faction = "naalu" and any? my-flagships) [
+    report my-living-units with [unit-type = "fighter" or unit-type = "infantry"]
+  ]
+
+  ; Hel-Titans
+  if (self = defender and my-faction = "ui") [
+    report (turtle-set my-local-pds my-infantry)
+  ]
+
+  report my-infantry
+
 end
 
 to-report anti-fighter-units
