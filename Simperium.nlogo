@@ -554,6 +554,7 @@ to do-invasion
 
     while [any? ([my-ground-forces] of attacker) and any? ([my-ground-forces] of defender)] [
       do-ground-combat attack-blocked?
+      tick
     ]
 
     if (not any? ([my-ground-forces] of defender)) [
