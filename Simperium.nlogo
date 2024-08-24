@@ -860,7 +860,6 @@ to cleanup
 end
 
 to-report optimal-soaker [the-units]
-  ; NOT IMPLEMENTED: Mentak flagship "Fourth Moon" ==> Other players' ships in this system cannot use SUSTAIN DAMAGE
 
   ; #JustNaaluThings
   ifelse ((count the-units with [unit-type = "infantry"] = 1) and (any? the-units with [unit-type = "fighter"])) [
@@ -1364,19 +1363,28 @@ end
 
 to-report max-hp
 
-  let f ([my-faction] of my-player)
+  let f        ([my-faction] of my-player)
+  let opponent (ifelse-value (my-player = attacker) [ defender ] [ attacker ])
 
-  if (unit-type = "flagship") or
+  if (unit-type = "pds") [
+    ifelse (f = "ai") [ ; UI Hel-Titans are not ships, so this needs to come before the Mentak check
+      report 2
+    ] [
+      report 0
+    ]
+  ]
+
+  ; Mentak flagship "Fourth Moon" ==> Other players' ships in this system cannot use SUSTAIN DAMAGE
+  if ([(my-faction = "mentak") and any? my-flagships] of opponent) [
+    report 1
+  ]
+
+  if ((unit-type = "flagship") or
        (unit-type = "warsun") or
        (unit-type = "dreadnought") or
        (unit-type = "carrier" and (f = "sol")) or
-       (unit-type = "cruiser" and upgraded? and (f = "ai")) or
-       (unit-type = "pds" and (f = "ai")) [
+       (unit-type = "cruiser" and upgraded? and (f = "ai"))) [
     report 2
-  ]
-
-  if unit-type = "pds" [
-    report 0
   ]
 
   report 1
@@ -1668,8 +1676,8 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-10
+"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+11
 
 CHOOSER
 1600
@@ -1678,7 +1686,7 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
 6
 
 SWITCH
@@ -2619,8 +2627,6 @@ String (reporter)
   * argent
     * Raid Formation: If AFB has hits with no fighters to target, apply them to ships with SUSTAIN DAMAGE
     * Upgraded Destroyers: 9s and 10s on AFB attacks also destroy 1 enemy infantry
-  * mentak
-    * Flagship: Disable other players' SUSTAIN DAMAGE
   * nomad
     * Upgradable flagships
   * yin
