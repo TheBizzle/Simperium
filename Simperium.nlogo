@@ -1269,15 +1269,8 @@ to-report bombard-value
 
   if (unit-type = "dreadnought") [
 
-    if (f = "l1z1x") [
-      ifelse upgraded? [
-        report 4
-      ] [
-        report 5
-      ]
-    ]
-
-    if (f = "sardakk") [
+    if ((f = "sardakk") or
+        (f = "l1z1x" and upgraded?)) [
       report 4
     ]
 
