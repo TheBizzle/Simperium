@@ -2686,13 +2686,11 @@ upgraded-flagship-2?
 
 ## EXTENDING THE MODEL
 
-### Unimplemented features
+### Unimplemented features (will probably never happen)
 
+  * Action cards
   * Promissory notes
-
-### Unimplemented factions
-
-  * yin
+  * Yin faction
     * Flagship: When destroyed, destroy all ships in the system
     * Indoctrination: Spend 2 Influence to replace an enemy infantry with one of my own
     * Devotion: Destroy one of my cruisers or destroyers to give 1 hit to enemy fleet
