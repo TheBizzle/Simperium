@@ -307,9 +307,6 @@ end
 
 to do-anti-fighter-barrage
 
-  ; NOT IMPLEMENTED: Argent faction's "Raid Formation"
-  ; NOT IMPLEMENTED: Argent upgraded Destroyers also destroy an enemy infantry for each 9 or 10 on an AFB attack
-
   set game-state "Tactical Action @3.1: Anti-Fighter Barrage"
 
   output-print "BEGIN PRE-SPACE COMBAT"
@@ -327,24 +324,58 @@ to do-anti-fighter-barrage
 
   output-print "BEGIN AFB"
 
-  let attacker-hits ([afb-hits] of attacker)
-  let defender-hits ([afb-hits] of defender)
+  let attacker-hit-pairs ([afb-hit-num-pairs] of attacker)
+  let defender-hit-pairs ([afb-hit-num-pairs] of defender)
 
-  foreach (list (list attacker-hits ([my-fighters] of defender) attacker) (list defender-hits ([my-fighters] of attacker) defender)) [
-    hits-fighters-actor-triple ->
-      ;let [hits fighters actor] hits-fighters-actor-triple
-      let hits     (item 0 hits-fighters-actor-triple)
-      let fighters (item 1 hits-fighters-actor-triple)
-      let actor    (item 2 hits-fighters-actor-triple)
-      foreach hits [
-        hitter ->
-          let options (fighters with [not destroyed?])
+
+  foreach (list (list attacker-hit-pairs attacker defender) (list defender-hit-pairs defender attacker)) [
+    hitpairs-actor-actee-triple ->
+
+      ;let [hitpairs actor actee] hits-actor-actee-triple
+      let hit-pairs (item 0 hitpairs-actor-actee-triple)
+      let actor     (item 1 hitpairs-actor-actee-triple)
+      let actee     (item 2 hitpairs-actor-actee-triple)
+
+
+      foreach hit-pairs [
+        hit-pair ->
+
+          let hitter      (item 0 hit-pairs)
+          let roll-result (item 1 hit-pairs)
+
+          ; Argent upgraded Destroyers ==> When this unit uses ANTI-FIGHTER BARRAGE, each result of 9 or 10 also destroys 1 of your opponent's infantry in the space area of the active system
+          if ((([my-faction] of actor) = "argent") and
+              ((roll-result = 9) or (roll-result = 10)) and
+              ([(unit-type = "destroyer") and upgraded?] of hitter) and
+              ((actor = defender) or (([my-faction] of actee) = "nekro"))) [ ; Gotta take Nekro space-infantry into account
+
+            let options ([my-infantry] of actee)
+
+            ifelse (any? options) [
+              let soaker (one-of options)
+              hit hitter soaker
+            ] [
+              ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S FREE INFANTRY KILL HAS NO TARGET") ]
+            ]
+
+          ]
+
+          let options ([my-fighters] of actee)
+
           ifelse (any? options) [
             let soaker (one-of options)
             hit hitter soaker
           ] [
-            ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
+            ; Argent ability "Raid Formation" ==> When 1 or more of your units uses ANTI-FIGHTER BARRAGE, for each hit produced in excess of your opponent's Fighters, choose 1 of your opponent's ships that has SUSTAIN DAMAGE to become damaged
+            let prey (([my-ships with [hp > 1]]) of actee)
+            ifelse ((([my-faction] of actor) = "argent") and (any? prey)) [
+              let soaker (one-of prey with-max [cost])
+              hit hitter soaker ; Technically, not a hit, but probably should use the same code
+            ] [
+              ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
+            ]
           ]
+
       ]
 
   ]
@@ -395,7 +426,7 @@ to activate-ambush [actor actee]
 
 end
 
-to-report afb-hits
+to-report afb-hit-num-pairs
 
   let my-hits []
 
@@ -406,8 +437,9 @@ to-report afb-hits
       let goal  (item 1 triple)
       let tries (item 2 triple)
       foreach (range tries) [
-        if (kenarified-roll non-combat-roll goal) [
-          set my-hits (fput ship my-hits)
+        let roll non-combat-roll
+        if (kenarified-roll roll goal) [
+          set my-hits (fput (list ship roll) my-hits)
         ]
       ]
   ]
@@ -1690,8 +1722,8 @@ CHOOSER
 535
 attacking-faction
 attacking-faction
-"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "nomad" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-11
+"arborec" "argent" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "nomad" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+12
 
 CHOOSER
 1190
@@ -1700,8 +1732,8 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "nomad" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-6
+"arborec" "argent" "creuss" "empyrean" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "mentak" "muaat" "naalu" "naaz-rokha" "nekro" "nomad" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+7
 
 SWITCH
 22
@@ -2660,9 +2692,6 @@ upgraded-flagship-2?
 
 ### Unimplemented factions
 
-  * argent
-    * Raid Formation: If AFB has hits with no fighters to target, apply them to ships with SUSTAIN DAMAGE
-    * Upgraded Destroyers: 9s and 10s on AFB attacks also destroy 1 enemy infantry
   * yin
     * Flagship: When destroyed, destroy all ships in the system
     * Indoctrination: Spend 2 Influence to replace an enemy infantry with one of my own
