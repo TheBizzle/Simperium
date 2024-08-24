@@ -174,7 +174,6 @@ end
 to combat
 
   ; NOT IMPLEMENTED: Empyrean "Dynamo" flagship ==> After any player's unit in this system or an adjacent system uses SUSTAIN DAMAGE, you may spend 2 influence to repair that unit.
-  ; NOT IMPLEMENTED: Jol-Nar "JNS Hylarim" flagship ==> When making a combat roll for this ship, each result of a 9 or 10, before applying modifiers, produces 2 additional hits.
   ; NOT IMPLEMENTED: Yin "Indoctrination" ability and "Devotion" ability and "Impulse Core" yellow tech and their "Van Hauge" flagship
 
   ; Turn order, from FFG: https://www.reddit.com/r/twilightimperium/comments/7w7v6r/ti4_rules_question_does_antifighter_barrage/
@@ -467,9 +466,19 @@ to-report space-combat-hits
       let tries (item 2 triple)
       foreach (range tries) [
         ask ship [
-          if (kenarified-roll combat-roll goal) [
+
+          let base-roll combat-roll
+
+          if (kenarified-roll base-roll goal) [
             set my-hits (fput ship my-hits)
           ]
+
+          ; Jol-Nar flagship "JNS Hylarim" ==> When making a combat roll for this ship, each result of a 9 or 10, before applying modifiers, produces 2 additional hits
+          ; Note that `combat-roll` applies the Jol-Nar "Fragile" ability (-1 to combat rolls), so we check 8 and 9 instead of 9 and 10
+          if ((([my-faction] of my-player) = "jol-nar") and (unit-type = "flagship") and ((base-roll = 8) or (base-roll = 9))) [
+            set my-hits (fput ship (fput ship my-hits))
+          ]
+
         ]
       ]
   ]
@@ -1607,8 +1616,8 @@ CHOOSER
 530
 attacking-faction
 attacking-faction
-"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-8
+"arborec" "creuss" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+9
 
 CHOOSER
 1600
@@ -1617,8 +1626,8 @@ CHOOSER
 535
 defending-faction
 defending-faction
-"arborec" "creuss" "hacan" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
-4
+"arborec" "creuss" "hacan" "jol-nar" "keleres" "l1z1x" "letnev" "mahact" "muaat" "naalu" "naaz-rokha" "nekro" "saar" "sardakk" "sol" "ui" "vuil'raith" "winnu" "xxcha" "yssaril"
+5
 
 SWITCH
 22
@@ -2538,8 +2547,6 @@ have-edict-token-2?
     * Upgraded Destroyers: 9s and 10s on AFB attacks also destroy 1 enemy infantry
   * empyrean
     * Flagship: Can spend 2 Influence to repair any damaged unit
-  * jol-nar
-    * Flagship: Each unmodified 9 or 10 on a combat roll for this ship produces +2 hits
   * mentak
     * Flagship: Disable other players' SUSTAIN DAMAGE
   * nomad
