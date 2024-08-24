@@ -2516,7 +2516,7 @@ HORIZONTAL
     * Flagship: When this ship makes a combat roll, it rolls a total of N dice, where N is the number of enemy non-fighters in-system
   * yin
     * Flagship: When destroyed, destroy all ships in the system
-    * Indoctrination: Spend 2 Influence to replace an enemy infantry with one of your own
+    * Indoctrination: Spend 2 Influence to replace an enemy infantry with one of my own
     * Devotion: Destroy one of my cruisers or destroyers to give 1 hit to enemy fleet
     * Impulse Core (tech): Destroy one of my cruisers or destroyers to give 1 hit to enemy fleet (non-fighter, if possible)
 
