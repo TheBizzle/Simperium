@@ -10,6 +10,7 @@ players-own [
   influence-bundles
   my-faction
   my-units
+  startup-cost
   trade-goods
 ]
 
@@ -38,8 +39,8 @@ to setup
   create-players 1 [
 
     set my-faction        attacking-faction
-    set trade-goods       initial-trade-goods-1
     set influence-bundles initial-influence-bundles-1
+    set trade-goods       initial-trade-goods-1
 
     mk-flagships    flagships-1    upgraded-flagship-1?    h1 c1
     mk-warsuns      warsuns-1      false                   h1 c1
@@ -57,7 +58,8 @@ to setup
 
     layout true
 
-    set defeated? false
+    set defeated?    false
+    set startup-cost total-value
 
     set hidden? true
 
@@ -96,7 +98,8 @@ to setup
 
     layout false
 
-    set defeated? false
+    set defeated?    false
+    set startup-cost total-value
 
     set hidden? true
 
@@ -1662,6 +1665,14 @@ to-report anti-fighter-units
   report (turtle-set my-destroyers)
 end
 
+to-report total-value
+  report sum [cost] of my-living-units
+end
+
+to-report production-lost
+  report startup-cost - total-value
+end
+
 to-report outcome
   ifelse (attacker != 0) [
 
@@ -2108,7 +2119,7 @@ cruisers-2
 cruisers-2
 0
 8
-3.0
+0.0
 1
 1
 NIL
@@ -2247,8 +2258,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot sum [cost] of [my-living-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot sum [cost] of [my-living-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "plot [total-value] of attacker"
+"defender" 1.0 0 -13345367 true "" "plot [total-value] of defender"
 
 PLOT
 910
@@ -2662,6 +2673,28 @@ upgraded-flagship-2?
 1
 1
 -1000
+
+MONITOR
+510
+555
+650
+600
+Attacker Production Lost
+[production-lost] of attacker
+17
+1
+11
+
+MONITOR
+1160
+555
+1312
+600
+Defender Production Lost
+[production-lost] of defender
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
