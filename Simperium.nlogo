@@ -339,12 +339,11 @@ to do-anti-fighter-barrage
       let actor     (item 1 hitpairs-actor-actee-triple)
       let actee     (item 2 hitpairs-actor-actee-triple)
 
-
       foreach hit-pairs [
         hit-pair ->
 
-          let hitter      (item 0 hit-pairs)
-          let roll-result (item 1 hit-pairs)
+          let hitter      (item 0 hit-pair)
+          let roll-result (item 1 hit-pair)
 
           ; Argent upgraded Destroyers ==> When this unit uses ANTI-FIGHTER BARRAGE, each result of 9 or 10 also destroys 1 of your opponent's infantry in the space area of the active system
           if ((([my-faction] of actor) = "argent") and
