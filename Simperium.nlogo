@@ -2078,7 +2078,7 @@ carriers-2
 carriers-2
 0
 4
-0.0
+1.0
 1
 1
 NIL
@@ -2108,7 +2108,7 @@ cruisers-2
 cruisers-2
 0
 8
-0.0
+3.0
 1
 1
 NIL
@@ -2277,9 +2277,9 @@ OUTPUT
 16
 
 SLIDER
-650
+660
 540
-1135
+1145
 573
 space-dock-capacity
 space-dock-capacity
@@ -2292,9 +2292,9 @@ NIL
 HORIZONTAL
 
 SWITCH
-650
+660
 580
-1135
+1145
 613
 system-has-planet?
 system-has-planet?
@@ -2443,9 +2443,9 @@ dimensional-splicer-2?
 -1000
 
 SWITCH
-650
+660
 620
-1135
+1145
 653
 system-has-wormhole?
 system-has-wormhole?
@@ -2520,9 +2520,9 @@ l4-disruptors?
 -1000
 
 MONITOR
-650
 660
-1135
+660
+1145
 757
 Outcome
 outcome
