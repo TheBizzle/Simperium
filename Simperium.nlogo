@@ -896,9 +896,23 @@ end
 
 to-report optimal-soaker [the-units]
 
-  ; #JustNaaluThings
-  ifelse ((count the-units with [unit-type = "infantry"] = 1) and (any? the-units with [unit-type = "fighter"])) [
-    report one-of (the-units with [unit-type = "fighter"])
+  ifelse ((any? the-units with [unit-type = "infantry"]) and (any? the-units with [unit-type = "fighter"])) [
+    let p ([my-player] of one-of the-units)
+    ifelse (([my-faction] of p) = "naalu") [ ; #JustNaaluThings
+      let fighters (the-units with [unit-type = "fighter"])
+      let infantry (the-units with [unit-type = "infantry"])
+      ifelse (count infantry >= 2) [
+        ifelse (([combat-value] of one-of fighters) <= ([combat-value] of one-of infantry)) [
+          report one-of infantry
+        ] [
+          report one-of fighters ; AKA: if infantry are upgraded and fighters are not, sacrifice a fighter
+        ]
+      ] [
+        report one-of (the-units with [unit-type = "fighter"])
+      ]
+    ] [ ; #JustNekroThings; I can't think of a realistic scenario where Nekro would get more out of a fighter than an infantry
+      report one-of (the-units with [unit-type = "fighter"])
+    ]
   ] [
     report one-of (turtle-set the-units) with-max [(hp * 1000) + (20 - cost)]
   ]
