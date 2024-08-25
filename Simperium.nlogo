@@ -440,9 +440,11 @@ to-report afb-hit-num-pairs
       let goal  (item 1 triple)
       let tries (item 2 triple)
       foreach (range tries) [
-        let roll non-combat-roll
-        if (kenarified-roll roll goal) [
-          set my-hits (fput (list ship roll) my-hits)
+        ask ship [
+          let roll non-combat-roll
+          if (kenarified-roll roll goal) [
+            set my-hits (fput (list ship roll) my-hits)
+          ]
         ]
       ]
   ]
