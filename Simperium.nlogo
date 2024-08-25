@@ -39,7 +39,7 @@ to setup
   create-players 1 [
 
     set my-faction        attacking-faction
-    set influence-bundles initial-influence-bundles-1
+    set influence-bundles (read-from-string initial-influence-bundles-1)
     set trade-goods       initial-trade-goods-1
 
     mk-flagships    flagships-1    upgraded-flagship-1?    h1 c1
@@ -70,8 +70,8 @@ to setup
     let w ifelse-value ((count units) > 0) [ (max [who] of units) ] [ -1 ]
 
     set my-faction        defending-faction
+    set influence-bundles (read-from-string initial-influence-bundles-2)
     set trade-goods       initial-trade-goods-2
-    set influence-bundles initial-influence-bundles-2
 
     mk-flagships    flagships-2    upgraded-flagship-2?    h2 c2
     mk-warsuns      warsuns-2      false                   h2 c2
