@@ -2696,6 +2696,28 @@ Defender Production Lost
 1
 11
 
+MONITOR
+510
+600
+650
+645
+Attacker Unit Value
+[total-value] of attacker
+17
+1
+11
+
+MONITOR
+1160
+600
+1310
+645
+Defender Unit Value
+[total-value] of defender
+17
+1
+11
+
 @#$#@#$#@
 ## WHAT IS IT?
 
