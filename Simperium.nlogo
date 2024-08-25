@@ -396,7 +396,7 @@ end
 ; Creuss "Dimensional Splicer" (red tech) ==> At the start of space combat in a system that contains a wormhole and 1 or more of your ships, you may produce 1 hit and assign it to 1 of your opponent's ships.
 to activate-dimensional-splicer [ds? actor actee]
   if (ds? and system-has-wormhole? and [my-faction = "creuss"] of actor) [
-    spooky-hit actor (optimal-soaker ([my-ships] of actee)) "Dimensional Splicer"
+    spooky-hit actor (optimal-target ([my-ships] of actee) actor) "Dimensional Splicer"
   ]
 end
 
@@ -916,6 +916,24 @@ to-report optimal-soaker [the-units]
     ]
   ] [
     report one-of (turtle-set the-units) with-max [(hp * 1000) + (20 - cost)]
+  ]
+
+end
+
+to-report optimal-target [the-units actor]
+
+  let actor-lacks-fighters? (not any? [my-fighters] of actor)
+  let prio-targets          (the-units with [(not member? unit-type (list "carrier" "fighter" "infantry" "pds")) and not (actor-lacks-fighters? and unit-type = "destroyer")])
+
+  ifelse (any? prio-targets) [
+    let one-shots (prio-targets with [hp = 1])
+    ifelse (any? one-shots) [
+      report one-of (one-shots with-max [cost])
+    ] [
+      report one-of (prio-targets with-max [cost])
+    ]
+  ] [
+    report one-of (the-units with-max [cost])
   ]
 
 end
