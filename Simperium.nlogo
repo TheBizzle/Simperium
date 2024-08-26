@@ -9,6 +9,7 @@ players-own [
   defeated?
   influence-bundles
   my-faction
+  my-local-pds
   my-units
   startup-cost
   trade-goods
@@ -83,10 +84,7 @@ to setup
     mk-infantry     infantry-2     upgraded-infantry-2?    h2 c2
     mk-pds          pds-2          upgraded-pds-2?         h2 c2
 
-    ask units with [who > w and unit-type = "pds"] [
-      set label       "local"
-      set label-color [0 0 0 0]
-    ]
+    set my-local-pds (units with [who > w and unit-type = "pds"])
 
     if (upgraded-pds-2?) [
       mk-pds adjacent-pds upgraded-pds-2? h2 c2
@@ -1672,10 +1670,6 @@ end
 
 to-report my-pds
   report my-living-units with [unit-type = "pds"]
-end
-
-to-report my-local-pds
-  report my-pds with [label = "local"]
 end
 
 to-report my-ground-forces
