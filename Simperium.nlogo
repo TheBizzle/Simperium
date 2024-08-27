@@ -2341,9 +2341,9 @@ system-has-planet?
 
 SLIDER
 20
-845
+885
 220
-878
+918
 fleet-limit-1
 fleet-limit-1
 0
@@ -2356,9 +2356,9 @@ HORIZONTAL
 
 SLIDER
 1600
-850
+890
 1800
-883
+923
 fleet-limit-2
 fleet-limit-2
 0
@@ -2606,9 +2606,9 @@ HORIZONTAL
 
 SLIDER
 20
-885
+925
 220
-918
+958
 initial-trade-goods-1
 initial-trade-goods-1
 0
@@ -2621,9 +2621,9 @@ HORIZONTAL
 
 SLIDER
 1600
-890
+930
 1800
-923
+963
 initial-trade-goods-2
 initial-trade-goods-2
 0
@@ -2636,9 +2636,9 @@ HORIZONTAL
 
 SWITCH
 17
-1005
+1045
 222
-1038
+1078
 have-edict-token-1?
 have-edict-token-1?
 1
@@ -2647,9 +2647,9 @@ have-edict-token-1?
 
 SWITCH
 1600
-1010
+1050
 1800
-1043
+1083
 have-edict-token-2?
 have-edict-token-2?
 1
@@ -2658,9 +2658,9 @@ have-edict-token-2?
 
 INPUTBOX
 1600
-930
+970
 1800
-1000
+1040
 initial-influence-bundles-2
 []
 1
@@ -2669,9 +2669,9 @@ String (reporter)
 
 INPUTBOX
 20
-925
+965
 220
-995
+1035
 initial-influence-bundles-1
 []
 1
