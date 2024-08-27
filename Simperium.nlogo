@@ -606,7 +606,7 @@ to do-invasion
     set game-state "Tactical Action @4.1: Bombardment"
     do-bombardment
 
-    do-space-cannon-defense ([my-ground-forces] of attacker)
+    do-space-cannon-defense
 
     while [any? ([my-ground-forces] of attacker) and any? ([my-ground-forces] of defender)] [
       do-ground-combat attack-blocked?
@@ -719,7 +719,7 @@ to-report bombardment-hits [plasma-scoring?]
 
 end
 
-to do-space-cannon-defense [attacking-troops]
+to do-space-cannon-defense
 
   ; L4 Disruptors (yellow tech) ==> During an invasion, units cannot use Space Cannon against your units
   ifelse (not l4-disruptors?) [
@@ -741,9 +741,8 @@ to do-space-cannon-defense [attacking-troops]
     foreach hits [
       hitter ->
         ask attacker [
-          let attackers attacking-troops with [not destroyed?]
-          if (any? attackers) [
-            hit hitter (optimal-soaker attackers)
+          if (any? my-ground-forces) [
+            hit hitter (optimal-soaker my-ground-forces)
           ]
         ]
     ]
