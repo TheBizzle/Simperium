@@ -1565,7 +1565,7 @@ to-report my-afb-triples
 end
 
 to-report my-space-cannon-triples
-  report [(list self space-cannon-value space-cannon-shots)] of (my-living-units with [space-cannon-value > 0])
+  report [(list self space-cannon-value space-cannon-shots)] of (my-remaining-units with [space-cannon-value > 0])
 end
 
 to-report my-space-combat-triples
@@ -1576,70 +1576,70 @@ to-report my-bombardment-triples
   report [(list self bombard-value bombard-shots)] of (my-ships with [bombard-value > 0])
 end
 
-to-report my-living-units
+to-report my-remaining-units
   report my-units with [not destroyed?]
 end
 
 to-report my-fleet
   ; Nekro flagship "The Alastor" ==> At the start of a space combat, choose any number of your ground forces in this system to participate in that combat as if they were ships
   ifelse ((my-faction = "nekro") and any? my-flagships) [
-    report my-living-units with [unit-type != "fighter" and unit-type != "pds"]
+    report my-remaining-units with [unit-type != "fighter" and unit-type != "pds"]
   ] [
-    report my-living-units with [unit-type != "fighter" and unit-type != "infantry" and unit-type != "pds"]
+    report my-remaining-units with [unit-type != "fighter" and unit-type != "infantry" and unit-type != "pds"]
   ]
 end
 
 to-report my-ships
   ; Nekro flagship "The Alastor" ==> At the start of a space combat, choose any number of your ground forces in this system to participate in that combat as if they were ships
   ifelse ((my-faction = "nekro") and any? my-flagships) [
-    report my-living-units with [unit-type != "pds"]
+    report my-remaining-units with [unit-type != "pds"]
   ] [
-    report my-living-units with [unit-type != "infantry" and unit-type != "pds"]
+    report my-remaining-units with [unit-type != "infantry" and unit-type != "pds"]
   ]
 
 end
 
 to-report my-flagships
-  report my-living-units with [unit-type = "flagship"]
+  report my-remaining-units with [unit-type = "flagship"]
 end
 
 to-report my-warsuns
-  report my-living-units with [unit-type = "warsun"]
+  report my-remaining-units with [unit-type = "warsun"]
 end
 
 to-report my-dreadnoughts
-  report my-living-units with [unit-type = "dreadnought"]
+  report my-remaining-units with [unit-type = "dreadnought"]
 end
 
 to-report my-cruisers
-  report my-living-units with [unit-type = "cruiser"]
+  report my-remaining-units with [unit-type = "cruiser"]
 end
 
 to-report my-destroyers
-  report my-living-units with [unit-type = "destroyer"]
+  report my-remaining-units with [unit-type = "destroyer"]
 end
 
 to-report my-carriers
-  report my-living-units with [unit-type = "carrier"]
+  report my-remaining-units with [unit-type = "carrier"]
 end
 
 to-report my-fighters
-  report my-living-units with [unit-type = "fighter"]
+  report my-remaining-units with [unit-type = "fighter"]
 end
 
 to-report my-infantry
-  report my-living-units with [unit-type = "infantry"]
+  report my-remaining-units with [unit-type = "infantry"]
 end
 
 to-report my-pds
-  report my-living-units with [unit-type = "pds"]
+  report my-remaining-units with [unit-type = "pds"]
 end
 
 to-report my-ground-forces
 
   ; Naalu flagship "Matriarch" ==> During an invasion in this system, you may commit fighters to planets as if they were ground forces. When combat ends, return those units to the space area.
   if (self = attacker and my-faction = "naalu" and any? my-flagships) [
-    report my-living-units with [unit-type = "fighter" or unit-type = "infantry"]
+    report my-remaining-units with [unit-type = "fighter" or unit-type = "infantry"]
   ]
 
   ; Hel-Titans
@@ -1656,7 +1656,7 @@ to-report anti-fighter-units
 end
 
 to-report total-value
-  report sum [cost] of my-living-units
+  report sum [cost] of my-units with [not destroyed?]
 end
 
 to-report production-lost
@@ -2210,8 +2210,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot sum [power] of [my-living-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot sum [power] of [my-living-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "plot sum [power] of [my-remaining-units] of attacker"
+"defender" 1.0 0 -13345367 true "" "plot sum [power] of [my-remaining-units] of defender"
 
 PLOT
 910
@@ -2229,8 +2229,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot sum [hp] of [my-living-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot sum [hp] of [my-living-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "plot sum [hp] of [my-remaining-units] of attacker"
+"defender" 1.0 0 -13345367 true "" "plot sum [hp] of [my-remaining-units] of defender"
 
 PLOT
 545
@@ -2267,8 +2267,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot count [my-living-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot count [my-living-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "plot count [my-remaining-units] of attacker"
+"defender" 1.0 0 -13345367 true "" "plot count [my-remaining-units] of defender"
 
 OUTPUT
 545
@@ -3267,14 +3267,14 @@ NetLogo 6.4.0
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>([defeated?] of attacker) or ([defeated?] of defender)</exitCondition>
-    <metric>sum [cost] of [my-living-units] of attacker</metric>
-    <metric>sum [cost] of [my-living-units] of defender</metric>
-    <metric>sum [power] of [my-living-units] of attacker</metric>
-    <metric>sum [power] of [my-living-units] of defender</metric>
-    <metric>sum [hp] of [my-living-units] of attacker</metric>
-    <metric>sum [hp] of [my-living-units] of defender</metric>
-    <metric>count [my-living-units] of attacker</metric>
-    <metric>count [my-living-units] of defender</metric>
+    <metric>sum [cost] of [my-remaining-units] of attacker</metric>
+    <metric>sum [cost] of [my-remaining-units] of defender</metric>
+    <metric>sum [power] of [my-remaining-units] of attacker</metric>
+    <metric>sum [power] of [my-remaining-units] of defender</metric>
+    <metric>sum [hp] of [my-remaining-units] of attacker</metric>
+    <metric>sum [hp] of [my-remaining-units] of defender</metric>
+    <metric>count [my-remaining-units] of attacker</metric>
+    <metric>count [my-remaining-units] of defender</metric>
     <metric>count [my-flagships] of attacker</metric>
     <metric>count [my-warsuns] of attacker</metric>
     <metric>count [my-dreadnoughts] of attacker</metric>
