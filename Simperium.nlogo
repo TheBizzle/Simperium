@@ -870,7 +870,7 @@ to cleanup
 
   ask winner [
 
-    let num-leftover-housing (ifelse-value ((self = defender) or (attacking-faction = "l1z1x")) [ space-dock-capacity ] [ 0 ])
+    let num-leftover-housing (ifelse-value (system-has-planet? and ((self = defender) or (attacking-faction = "l1z1x"))) [ space-dock-capacity ] [ 0 ])
 
     let num-unhoused-fighters ((count my-fighters) - num-leftover-housing)
     if ((my-faction = "naalu") and (any? my-fighters) and ([upgraded?] of one-of my-fighters)) [
