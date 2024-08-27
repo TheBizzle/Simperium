@@ -1096,128 +1096,92 @@ end
 
 to mk-flagships [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "flagship"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 4
-    set color c
-    set shape "star"
+    set shape     "star"
+    set size      4
+    mk-unit u? h c
   ]
 end
 
 to mk-warsuns [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "warsun"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 4
-    set color c
-    set shape "circle"
+    set shape     "circle"
+    set size      4
+    mk-unit u? h c
   ]
 end
 
 to mk-dreadnoughts [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "dreadnought"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 3.5
-    set color c
-    set shape "turtle"
+    set shape     "turtle"
+    set size      3.5
+    mk-unit u? h c
   ]
 end
 
 to mk-cruisers [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "cruiser"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 3
-    set color c
-    set shape "default"
+    set shape     "default"
+    set size      3
+    mk-unit u? h c
   ]
 end
 
 to mk-destroyers [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "destroyer"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 2.5
-    set color c
-    set shape "bug"
+    set shape     "bug"
+    set size      2.5
+    mk-unit u? h c
   ]
 end
 
 to mk-carriers [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "carrier"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 2.5
-    set color c
-    set shape "truck"
+    set shape     "truck"
+    set size      2.5
+    mk-unit u? h c
   ]
 end
 
 to mk-fighters [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "fighter"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 1.5
-    set color c
-    set shape "airplane"
+    set shape     "airplane"
+    set size      1.5
+    mk-unit u? h c
   ]
 end
 
 to mk-infantry [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "infantry"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 1.5
-    set color c
-    set shape "flag"
+    set shape     "flag"
+    set size      1.5
+    mk-unit u? h c
   ]
 end
 
 to mk-pds [num u? h c]
   hatch-units num [
-    set my-player myself
     set unit-type "pds"
-    set upgraded? u?
-    set damaged? false
-    set destroyed? false
-    set heading h
-    set size 1.5
-    set color c
-    set shape "box"
+    set shape     "box"
+    set size      1.5
+    mk-unit u? h c
   ]
+end
+
+to mk-unit [u? h c]
+  set my-player myself
+  set color      c
+  set heading    h
+  set upgraded?  u?
+  set damaged?   false
+  set destroyed? false
 end
 
 to-report power
