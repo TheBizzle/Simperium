@@ -843,20 +843,20 @@ to pre-invasion-cleanup
 
   ask ps [
 
+    let num-unhoused-infantry (count my-infantry)
+    let fleet-capacity        (sum [capacity] of my-ships)
+    let num-dying-infantry    (num-unhoused-infantry - fleet-capacity)
+    ask n-of (max (list num-dying-infantry 0)) my-infantry [ go-bye-bye "no capacity" ]
+
     let num-unhoused-fighters (count my-fighters)
     if ((my-faction = "naalu") and (any? my-fighters) and ([upgraded?] of one-of my-fighters)) [
       let num-houseable-fighters (max (list 0 ((fleet-limit-1 - (count my-fleet)) * 2)))
       set num-unhoused-fighters  (num-unhoused-fighters - num-houseable-fighters)
     ]
 
-    let fleet-capacity        (sum [capacity] of my-ships)
-    let num-dying-fighters    (num-unhoused-fighters - fleet-capacity)
+    let capacity-for-fighters (max (list 0 (ifelse-value (num-dying-infantry > 0) [ 0 ] [ (fleet-capacity - num-unhoused-infantry) ])))
+    let num-dying-fighters    (num-unhoused-fighters - capacity-for-fighters)
     ask n-of (max (list num-dying-fighters 0)) my-fighters [ go-bye-bye "no capacity" ]
-
-    let num-unhoused-infantry (count my-infantry)
-    let capacity-for-infantry (max (list 0 (ifelse-value (num-dying-fighters > 0) [ 0 ] [ (fleet-capacity - num-unhoused-fighters) ])))
-    let num-dying-infantry    (num-unhoused-infantry - capacity-for-infantry)
-    ask n-of (max (list num-dying-infantry 0)) my-infantry [ go-bye-bye "no capacity" ]
 
   ]
 
