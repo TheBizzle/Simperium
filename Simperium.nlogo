@@ -578,7 +578,7 @@ to activate-duranium-armor [da? actor could-have-soakeds]
   if da? [
     ask actor [
       let just-soaked (could-have-soakeds with [damaged?])
-      let options     (my-ships with [damaged? and not destroyed?] who-are-not just-soaked) ; These ones might have soaked at one point, but they didn't use it this round
+      let options     (my-ships with [damaged?] who-are-not just-soaked) ; These ones might have soaked at one point, but they didn't use it this round
       let fixer-upper (one-of options with-max [cost])
       if any? fixer-upper [
         ask fixer-upper [
