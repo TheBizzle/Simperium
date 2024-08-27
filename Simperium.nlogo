@@ -13,6 +13,7 @@ players-own [
   my-units
   startup-cost
   trade-goods
+  until-retreat
 ]
 
 units-own [
@@ -20,6 +21,7 @@ units-own [
   destroyed?
   hit-count
   my-player
+  retreated?
   unit-type
   upgraded?
 ]
@@ -59,8 +61,9 @@ to setup
 
     layout true
 
-    set defeated?    false
-    set startup-cost total-value
+    set defeated?     false
+    set startup-cost  total-value
+    set until-retreat -1
 
     set hidden? true
 
@@ -96,8 +99,9 @@ to setup
 
     layout false
 
-    set defeated?    false
-    set startup-cost total-value
+    set defeated?     false
+    set startup-cost  total-value
+    set until-retreat rounds-until-retreat
 
     set hidden? true
 
@@ -486,7 +490,35 @@ to do-space-combat
 
   output-print "END SPACE COMBAT HITS"
 
+  ask defender [
+    if (until-retreat = 0) [
+      retreat
+    ]
+    if (until-retreat > 0) [
+      set until-retreat (until-retreat - 1)
+    ]
+  ]
+
   output-print "END SPACE COMBAT ROUND"
+
+end
+
+to retreat
+
+  output-print "START RETREAT"
+
+  let num-r-infantry      retreat-cleanup
+  let retreating-infantry (up-to-n-of num-r-infantry my-infantry)
+  let retreaters          (turtle-set my-ships retreating-infantry)
+
+  ask retreaters [
+    set retreated? true
+    set color      white
+  ]
+
+  output-print (word (count retreaters) " UNITS RETREATED")
+
+  output-print "END RETREAT"
 
 end
 
@@ -862,6 +894,27 @@ to pre-invasion-cleanup
 
 end
 
+to-report retreat-cleanup
+
+  set game-state "retreat cleanup"
+
+  let num-leftover-housing (ifelse-value system-has-planet? [ space-dock-capacity ] [ 0 ])
+
+  let num-unhoused-fighters ((count my-fighters) - num-leftover-housing)
+
+  let fleet-capacity        (sum [capacity] of my-ships)
+  let num-dying-fighters    (num-unhoused-fighters - fleet-capacity)
+  ask n-of (max (list num-dying-fighters 0)) my-fighters [ go-bye-bye "no capacity" ]
+
+  let num-unhoused-infantry (ifelse-value system-has-planet? [ 0 ] [ count my-infantry ])
+  let capacity-for-infantry (max (list 0 (ifelse-value (num-dying-fighters > 0) [ 0 ] [ (fleet-capacity - num-unhoused-fighters) ])))
+  let num-dying-infantry    (num-unhoused-infantry - capacity-for-infantry)
+  ask n-of (max (list num-dying-infantry 0)) my-infantry [ go-bye-bye "no capacity" ]
+
+  report capacity-for-infantry
+
+end
+
 to cleanup
 
   set game-state "cleanup"
@@ -1182,6 +1235,7 @@ to mk-unit [u? h c]
   set upgraded?  u?
   set damaged?   false
   set destroyed? false
+  set retreated? false
 end
 
 to-report power
@@ -1577,7 +1631,7 @@ to-report my-bombardment-triples
 end
 
 to-report my-remaining-units
-  report my-units with [not destroyed?]
+  report my-units with [not destroyed? and not retreated?]
 end
 
 to-report my-fleet
@@ -2707,6 +2761,21 @@ Defender Unit Value
 17
 1
 11
+
+SLIDER
+1600
+850
+1800
+883
+rounds-until-retreat
+rounds-until-retreat
+-1
+10
+0.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
