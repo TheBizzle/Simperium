@@ -3284,6 +3284,9 @@ NetLogo 6.4.0
     <metric>count [my-fighters] of attacker</metric>
     <metric>count [my-infantry] of attacker</metric>
     <metric>count [my-pds] of attacker</metric>
+    <metric>[production-lost] of attacker</metric>
+    <metric>[production-lost] of defender</metric>
+    <metric>([production-lost] of defender) - ([production-lost] of attacker)</metric>
     <metric>outcome</metric>
   </experiment>
 </experiments>
