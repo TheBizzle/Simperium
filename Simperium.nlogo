@@ -2145,7 +2145,7 @@ carriers-2
 carriers-2
 0
 4
-1.0
+0.0
 1
 1
 NIL
@@ -2378,7 +2378,7 @@ fleet-limit-1
 fleet-limit-1
 0
 15
-6.0
+7.0
 1
 1
 NIL
@@ -2450,7 +2450,7 @@ SWITCH
 958
 graviton-lasers-1?
 graviton-lasers-1?
-1
+0
 1
 -1000
 
@@ -2783,7 +2783,7 @@ rounds-until-retreat-2
 rounds-until-retreat-2
 -1
 10
--1.0
+0.0
 1
 1
 NIL
