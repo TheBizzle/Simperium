@@ -63,7 +63,7 @@ to setup
 
     set defeated?     false
     set startup-cost  total-value
-    set until-retreat -1
+    set until-retreat rounds-until-retreat-1
 
     set hidden? true
 
@@ -101,7 +101,7 @@ to setup
 
     set defeated?     false
     set startup-cost  total-value
-    set until-retreat rounds-until-retreat
+    set until-retreat rounds-until-retreat-2
 
     set hidden? true
 
@@ -490,13 +490,18 @@ to do-space-combat
 
   output-print "END SPACE COMBAT HITS"
 
-  ask defender [
-    if (until-retreat = 0) [
-      retreat
+  ifelse (([until-retreat] of defender) = 0) [
+    ask defender [ retreat ]
+  ] [
+    ask attacker [
+      if (until-retreat = 0) [
+        retreat
+      ]
     ]
-    if (until-retreat > 0) [
-      set until-retreat (until-retreat - 1)
-    ]
+  ]
+
+  ask players [
+    set until-retreat (until-retreat - 1)
   ]
 
   output-print "END SPACE COMBAT ROUND"
@@ -505,7 +510,9 @@ end
 
 to retreat
 
-  output-print "START RETREAT"
+  let logging-prefix (word (ifelse-value (self = attacker) [ "attacker" ] [ "defender" ]) ": ")
+
+  output-print (word logging-prefix "START RETREAT")
 
   let num-r-infantry      retreat-cleanup
   let retreating-infantry (up-to-n-of num-r-infantry my-infantry)
@@ -516,9 +523,9 @@ to retreat
     set color      white
   ]
 
-  output-print (word (count retreaters) " UNITS RETREATED")
+  output-print (word logging-prefix (count retreaters) " UNITS RETREATED")
 
-  output-print "END RETREAT"
+  output-print (word logging-prefix "END RETREAT")
 
 end
 
@@ -2767,11 +2774,26 @@ SLIDER
 850
 1800
 883
-rounds-until-retreat
-rounds-until-retreat
+rounds-until-retreat-2
+rounds-until-retreat-2
 -1
 10
-0.0
+-1.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+17
+845
+222
+878
+rounds-until-retreat-1
+rounds-until-retreat-1
+-1
+10
+-1.0
 1
 1
 NIL
