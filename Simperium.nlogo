@@ -972,7 +972,12 @@ to-report optimal-soaker [the-units]
       report one-of (the-units with [unit-type = "fighter"])
     ]
   ] [
-    report one-of (turtle-set the-units) with-max [(hp * 1000) + (20 - cost)]
+    let opponent (ifelse-value (([my-player] of one-of the-units) = attacker) [ defender ] [ attacker ])
+    ifelse ((any? the-units with [unit-type = "fighter"]) and ([my-faction = "l1z1x"] of opponent) and (any? [my-flagships] of opponent)) [
+      report one-of the-units with [unit-type = "fighter"]
+    ] [
+      report one-of (turtle-set the-units) with-max [(hp * 1000) + (20 - cost)]
+    ]
   ]
 
 end
