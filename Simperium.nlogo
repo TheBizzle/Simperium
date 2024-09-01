@@ -205,9 +205,9 @@ to do-space-cannon-offense
 
   set game-state "Tactical Action @2.2: Space Cannon Offense"
 
-  output-print "BEGIN SCO"
+  output "BEGIN SCO"
 
-  output-print "BEGIN SCO ROLLS"
+  output "BEGIN SCO ROLLS"
 
   let amd1? antimass-deflectors-1?
   let amd2? antimass-deflectors-2?
@@ -219,9 +219,9 @@ to do-space-cannon-offense
   let attacker-hits (ifelse-value (not [my-faction = "argent" and any? my-flagships] of defender) [ [space-cannon-hits amd2? ps1?] of attacker ] [ [] ])
   let defender-hits (ifelse-value (not [my-faction = "argent" and any? my-flagships] of attacker) [ [space-cannon-hits amd1? ps2?] of defender ] [ [] ])
 
-  output-print "END SCO ROLLS"
+  output "END SCO ROLLS"
 
-  output-print "BEGIN SCO HITS"
+  output "BEGIN SCO HITS"
 
   let gls1? graviton-lasers-1?
   let gls2? graviton-lasers-2?
@@ -244,9 +244,9 @@ to do-space-cannon-offense
       ]
   ]
 
-  output-print "END SCO HITS"
+  output "END SCO HITS"
 
-  output-print "END SCO"
+  output "END SCO"
 
 end
 
@@ -312,7 +312,7 @@ to do-anti-fighter-barrage
 
   set game-state "Tactical Action @3.1: Anti-Fighter Barrage"
 
-  output-print "BEGIN PRE-SPACE COMBAT"
+  output "BEGIN PRE-SPACE COMBAT"
 
   activate-assault-cannon assault-cannon-1? attacker defender
   activate-assault-cannon assault-cannon-2? defender attacker
@@ -323,9 +323,9 @@ to do-anti-fighter-barrage
   activate-ambush attacker defender
   activate-ambush defender attacker
 
-  output-print "END PRE-SPACE COMBAT"
+  output "END PRE-SPACE COMBAT"
 
-  output-print "BEGIN AFB"
+  output "BEGIN AFB"
 
   let attacker-hit-pairs ([afb-hit-num-pairs] of attacker)
   let defender-hit-pairs ([afb-hit-num-pairs] of defender)
@@ -357,7 +357,7 @@ to do-anti-fighter-barrage
               let soaker (one-of options)
               hit hitter soaker
             ] [
-              ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S FREE INFANTRY KILL HAS NO TARGET") ]
+              ask hitter [ output (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S FREE INFANTRY KILL HAS NO TARGET") ]
             ]
 
           ]
@@ -374,7 +374,7 @@ to do-anti-fighter-barrage
               let soaker (one-of prey with-max [cost])
               hit hitter soaker ; Technically, not a hit, but probably should use the same code
             ] [
-              ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
+              ask hitter [ output (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
             ]
           ]
 
@@ -382,7 +382,7 @@ to do-anti-fighter-barrage
 
   ]
 
-  output-print "END AFB"
+  output "END AFB"
 
 end
 
@@ -408,7 +408,7 @@ to activate-ambush [actor actee]
 
     if (my-faction = "mentak") [
 
-      output-print "START MENTAK AMBUSH"
+      output "START MENTAK AMBUSH"
 
       let sorted    (sort-on [combat-value] (turtle-set my-cruisers my-destroyers))
       let ambushers (up-to-n-of 2 sorted)
@@ -420,7 +420,7 @@ to activate-ambush [actor actee]
           ]
       ]
 
-      output-print "END MENTAK AMBUSH"
+      output "END MENTAK AMBUSH"
 
     ]
 
@@ -454,7 +454,7 @@ end
 
 to do-space-combat
 
-  output-print "BEGIN SPACE COMBAT ROUND"
+  output "BEGIN SPACE COMBAT ROUND"
 
   ; Letnev flagshp "Arc Secundus" ==> At the start of each space combat round, repair this ship
   ask units [
@@ -464,15 +464,15 @@ to do-space-combat
   ]
 
   set game-state "Tactical Action @3.3: Make Combat Rolls"
-  output-print "BEGIN SPACE COMBAT ROLLS"
+  output "BEGIN SPACE COMBAT ROLLS"
 
   let attacker-hits ([space-combat-hits] of attacker)
   let defender-hits ([space-combat-hits] of defender)
 
-  output-print "END SPACE COMBAT ROLLS"
+  output "END SPACE COMBAT ROLLS"
 
   set game-state "Tactical Action @3.4: Assign Hits"
-  output-print "BEGIN SPACE COMBAT HITS"
+  output "BEGIN SPACE COMBAT HITS"
 
   let attacker-pre-soaked-soakers (([my-ships] of attacker) with [max-hp > 1 and not damaged?])
   let defender-pre-soaked-soakers (([my-ships] of defender) with [max-hp > 1 and not damaged?])
@@ -486,7 +486,7 @@ to do-space-combat
   activate-duranium-armor duranium-armor-1? attacker attacker-pre-soaked-soakers
   activate-duranium-armor duranium-armor-2? defender defender-pre-soaked-soakers
 
-  output-print "END SPACE COMBAT HITS"
+  output "END SPACE COMBAT HITS"
 
   ifelse (([until-retreat] of defender) = 0) [
     ask defender [ retreat ]
@@ -502,7 +502,7 @@ to do-space-combat
     set until-retreat (until-retreat - 1)
   ]
 
-  output-print "END SPACE COMBAT ROUND"
+  output "END SPACE COMBAT ROUND"
 
 end
 
@@ -510,7 +510,7 @@ to retreat
 
   let logging-prefix (word (ifelse-value (self = attacker) [ "attacker" ] [ "defender" ]) ": ")
 
-  output-print (word logging-prefix "START RETREAT")
+  output (word logging-prefix "START RETREAT")
 
   let num-r-infantry      retreat-cleanup
   let retreating-infantry (up-to-n-of num-r-infantry my-infantry)
@@ -521,9 +521,9 @@ to retreat
     set color      white
   ]
 
-  output-print (word logging-prefix (count retreaters) " UNITS RETREATED")
+  output (word logging-prefix (count retreaters) " UNITS RETREATED")
 
-  output-print (word logging-prefix "END RETREAT")
+  output (word logging-prefix "END RETREAT")
 
 end
 
@@ -596,12 +596,12 @@ to assign-space-combat-hits [hits actor actee nes?]
 
       ; Letnev "Non-Euclidean Shielding" (red tech) ==> When 1 of your units uses Sustain Damage, cancel 2 hits instead of 1
       if (((z - i) > 1) and ne-shielding? and (([hp] of soaker) > 1)) [
-        ask (item (z - 1) sorted-hits) [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT CANCELLED BY NON-EUCLIDEAN SHIELDING") ]
+        ask (item (z - 1) sorted-hits) [ output (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT CANCELLED BY NON-EUCLIDEAN SHIELDING") ]
         set z (z - 1)
       ]
 
     ] [
-      ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
+      ask hitter [ output (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
     ]
 
     set i (i + 1)
@@ -619,7 +619,7 @@ to activate-duranium-armor [da? actor could-have-soakeds]
       let fixer-upper (one-of options with-max [cost])
       if any? fixer-upper [
         ask fixer-upper [
-          output-print (word "REMOVING DAMAGE FROM " unit-type " " who " (Duranium Armor)")
+          output (word "REMOVING DAMAGE FROM " unit-type " " who " (Duranium Armor)")
           set damaged? false
         ]
       ]
@@ -629,7 +629,7 @@ end
 
 to do-invasion
 
-  output-print "BEGIN INVASION ROUND"
+  output "BEGIN INVASION ROUND"
 
   if (not after-first-invasion-round?) [
     pre-invasion-cleanup
@@ -683,7 +683,7 @@ to do-invasion
     ]
   ]
 
-  output-print "END INVASION ROUND"
+  output "END INVASION ROUND"
 
   set after-first-invasion-round? true
 
@@ -701,15 +701,15 @@ to do-bombardment
 
     ifelse (shields-disabled? or (not any? [my-pds] of defender)) [
 
-      output-print "BEGIN BOMBARDMENT"
+      output "BEGIN BOMBARDMENT"
 
-      output-print "BEGIN BOMBARDMENT ROLLS"
+      output "BEGIN BOMBARDMENT ROLLS"
 
       let hits (bombardment-hits plasma-scoring-1?)
 
-      output-print "END BOMBARDMENT ROLLS"
+      output "END BOMBARDMENT ROLLS"
 
-      output-print "BEGIN BOMBARDMENT HITS"
+      output "BEGIN BOMBARDMENT HITS"
 
       foreach hits [
         hitter ->
@@ -720,12 +720,12 @@ to do-bombardment
           ]
       ]
 
-      output-print "END BOMBARDMENT HITS"
+      output "END BOMBARDMENT HITS"
 
-      output-print "END BOMBARDMENT"
+      output "END BOMBARDMENT"
 
     ] [
-      output-print "SKIPPING BOMBARDMENT"
+      output "SKIPPING BOMBARDMENT"
     ]
 
   ]
@@ -762,18 +762,18 @@ to do-space-cannon-defense
   ifelse (not l4-disruptors?) [
 
     set game-state "Tactical Action @4.3: Space Cannon Defense"
-    output-print "BEGIN SPACE CANNON DEFENSE"
+    output "BEGIN SPACE CANNON DEFENSE"
 
     let amd? antimass-deflectors-1?
     let ps?  plasma-scoring-2?
 
-    output-print "START SCD ROLLS"
+    output "START SCD ROLLS"
 
     let hits ([space-cannon-hits amd? ps?] of defender)
 
-    output-print "END SCD ROLLS"
+    output "END SCD ROLLS"
 
-    output-print "BEGIN SCD HITS"
+    output "BEGIN SCD HITS"
 
     foreach hits [
       hitter ->
@@ -784,22 +784,22 @@ to do-space-cannon-defense
         ]
     ]
 
-    output-print "END SCD HITS"
+    output "END SCD HITS"
 
-    output-print "END SPACE CANNON DEFENSE"
+    output "END SPACE CANNON DEFENSE"
 
   ] [
-    output-print "SKIPPING SPACE CANNON DEFENSE"
+    output "SKIPPING SPACE CANNON DEFENSE"
   ]
 
 end
 
 to do-ground-combat [attack-blocked?]
 
-  output-print "BEGIN GROUND COMBAT ROUND"
+  output "BEGIN GROUND COMBAT ROUND"
 
   set game-state "Tactical Action @4.4: Ground Combat"
-  output-print "BEGIN GROUND COMBAT ROLLS"
+  output "BEGIN GROUND COMBAT ROLLS"
 
   let init-attacker-hits (ifelse-value (not attack-blocked?) [ ground-combat-hits attacker ] [ [] ])
   let init-defender-hits (                                     ground-combat-hits defender         )
@@ -811,23 +811,23 @@ to do-ground-combat [attack-blocked?]
   let attacker-hits ([ifelse-value (my-faction = "sardakk" and vpw1? and any? init-defender-hits) [ fput self init-attacker-hits ] [ init-attacker-hits ]] of attacker)
   let defender-hits ([ifelse-value (my-faction = "sardakk" and vpw2? and any? init-attacker-hits) [ fput self init-defender-hits ] [ init-defender-hits ]] of defender)
 
-  output-print "END GROUND COMBAT ROLLS"
+  output "END GROUND COMBAT ROLLS"
 
   set game-state "Tactical Action @4.4b: Assign Hits"
-  output-print "BEGIN GROUND COMBAT HITS"
+  output "BEGIN GROUND COMBAT HITS"
 
   assign-ground-combat-hits attacker-hits attacker defender
   assign-ground-combat-hits defender-hits defender attacker
 
-  output-print "END GROUND COMBAT HITS"
+  output "END GROUND COMBAT HITS"
 
-  output-print "END GROUND COMBAT ROUND"
+  output "END GROUND COMBAT ROUND"
 
   ; L1Z1X ability "Harrow" ==> At the end of each round of ground combat, your ships in the active system may use their Bombardment abilities against your opponent's ground forces on the planet
   if (([my-faction] of attacker) = "l1z1x") [
-    output-print "BEGIN L1Z1X HARROW"
+    output "BEGIN L1Z1X HARROW"
     do-bombardment
-    output-print "END L1Z1X HARROW"
+    output "END L1Z1X HARROW"
   ]
 
 end
@@ -869,7 +869,7 @@ to assign-ground-combat-hits [hits actor actee]
           spooky-hit hitter soaker "Valkyrie Particle Weave"
         ]
       ] [
-        ask hitter [ output-print (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
+        ask hitter [ output (word (ifelse-value (actor = attacker) [ "ATTACKER" ] [ "DEFENDER" ]) " (" unit-type " " who ")'S HIT HAS NO TARGET") ]
       ]
   ]
 end
@@ -1038,7 +1038,7 @@ to hit [hitter target]
 
   ask hitter [
 
-    output-print (word "HIT: " (ifelse-value (my-player != attacker) [ "attacker's" ] [ "defender's" ]) " " [unit-type] of target " " [who] of target " (by " unit-type " " who ")")
+    output (word "HIT: " (ifelse-value (my-player != attacker) [ "attacker's" ] [ "defender's" ]) " " [unit-type] of target " " [who] of target " (by " unit-type " " who ")")
 
     create-link-to target [
       set color (one-of base-colors)
@@ -1061,7 +1061,7 @@ end
 
 to spooky-hit [p target reason]
 
-  output-print (word "HIT: " (ifelse-value (p != attacker) [ "attacker's" ] [ "defender's" ]) " " [unit-type] of target " " [who] of target " (" reason ")")
+  output (word "HIT: " (ifelse-value (p != attacker) [ "attacker's" ] [ "defender's" ]) " " [unit-type] of target " " [who] of target " (" reason ")")
 
   ask target [
     ifelse ((hp - 1) <= 0) [
@@ -1116,7 +1116,7 @@ to sustain-damage
 
     ]
 
-    output-print (word "EMPYREAN DYNAMO REPAIRED A HIT TO " unit-type " " who)
+    output (word "EMPYREAN DYNAMO REPAIRED A HIT TO " unit-type " " who)
 
   ] [
 
@@ -1151,7 +1151,7 @@ to go-bye-bye [reason]
 
   ask damage-markers-here [ die ]
 
-  output-print (word "DEATH: " (ifelse-value (my-player = attacker) [ "attacker's" ] [ "defender's" ]) " " unit-type " " who " (" reason ")")
+  output (word "DEATH: " (ifelse-value (my-player = attacker) [ "attacker's" ] [ "defender's" ]) " " unit-type " " who " (" reason ")")
 
   set destroyed? true
 
@@ -1751,6 +1751,10 @@ to-report outcome
   ] [
     report "Uninitialized"
   ]
+end
+
+to output [x]
+  if not false [ output-print x ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
