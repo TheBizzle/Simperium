@@ -1909,9 +1909,7 @@ to print-bizzlespace-metrics
   let d-pd-r    (run-result process (item 27 data))
   let outcomes  (process-outcomes   (item 28 data))
 
-  output-print "==== BIZZLESPACE RESULTS ===="
-
-  output-print "\n== ATTACKER ==\n"
+  output-print "=== ATTACKER ===\n"
 
   output-print (word "Units:        " a-count-r " / " ([startup-count] of attacker))
   output-print (word "Production:   " a-cost-r  " / " ([startup-cost]  of attacker))
@@ -1926,7 +1924,7 @@ to print-bizzlespace-metrics
   output-print (word "Fighters:     " a-fi-r    " / " fighters-1)
   output-print (word "Infantry:     " a-in-r    " / " infantry-1)
 
-  output-print "\n\n== DEFENDER ==\n"
+  output-print "\n\n=== DEFENDER ===\n"
 
   output-print (word "Units:        " d-count-r " / " ([startup-count] of defender))
   output-print (word "Production:   " d-cost-r  " / " ([startup-cost] of defender))
@@ -1942,7 +1940,7 @@ to print-bizzlespace-metrics
   output-print (word "Infantry:     " d-in-r    " / " infantry-2)
   output-print (word "PDS:          " d-pd-r    " / " pds-2)
 
-  output-print "\n== SUMMARY ==\n"
+  output-print "\n=== SUMMARY ===\n"
 
   output-print (word "Steps:              " steps)
   output-print (word "Attacker Prod Loss: " a-cost-l)
