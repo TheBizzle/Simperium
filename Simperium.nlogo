@@ -61,11 +61,7 @@ to setup
 
     layout true
 
-    set defeated?     false
-    set startup-cost  total-value
     set until-retreat rounds-until-retreat-1
-
-    set hidden? true
 
   ]
 
@@ -99,12 +95,14 @@ to setup
 
     layout false
 
-    set defeated?     false
-    set startup-cost  total-value
     set until-retreat rounds-until-retreat-2
 
-    set hidden? true
+  ]
 
+  ask players [
+    set defeated?     false
+    set startup-cost  total-value
+    set hidden?       true
   ]
 
   set game-state "pre-combat"
