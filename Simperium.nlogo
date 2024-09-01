@@ -3058,7 +3058,7 @@ MONITOR
 1243
 1720
 1317
-Bizzlespace Progress
+BizzleSpace Progress
 ifelse-value (bizzlespace-run-num = -1) [ \"N/A\" ] [ (word bizzlespace-run-num \" / 1000\") ]
 17
 1
