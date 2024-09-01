@@ -941,7 +941,7 @@ to-report retreat-cleanup
   let num-dying-infantry    (num-unhoused-infantry - capacity-for-infantry)
   ask n-of (max (list num-dying-infantry 0)) my-infantry [ go-bye-bye "no capacity" ]
 
-  report capacity-for-infantry
+  report (ifelse-value (self = defender) [ 0 ] [ capacity-for-infantry ])
 
 end
 
