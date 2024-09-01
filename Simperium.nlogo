@@ -1640,6 +1640,10 @@ to-report my-bombardment-triples
   report [(list self bombard-value bombard-shots)] of (my-ships with [bombard-value > 0])
 end
 
+to-report my-living-units
+  report my-units with [not destroyed?]
+end
+
 to-report my-remaining-units
   report my-units with [not destroyed? and not retreated?]
 end
@@ -1720,7 +1724,7 @@ to-report anti-fighter-units
 end
 
 to-report total-value
-  report sum [cost] of my-units with [not destroyed?]
+  report sum [cost] of my-living-units
 end
 
 to-report production-lost
