@@ -1913,7 +1913,7 @@ to print-bizzlespace-metrics
 
   output-print "\n== ATTACKER ==\n"
 
-  output-print (word "Ships:        " a-count-r " / " ([startup-count] of attacker))
+  output-print (word "Units:        " a-count-r " / " ([startup-count] of attacker))
   output-print (word "Production:   " a-cost-r  " / " ([startup-cost]  of attacker))
   output-print (word "Power:        " a-power-r " / " ([startup-power] of attacker))
   output-print (word "HP:           " a-hp-r    " / " ([startup-hp]    of attacker))
@@ -1928,7 +1928,7 @@ to print-bizzlespace-metrics
 
   output-print "\n\n== DEFENDER ==\n"
 
-  output-print (word "Ships:        " d-count-r " / " ([startup-count] of defender))
+  output-print (word "Units:        " d-count-r " / " ([startup-count] of defender))
   output-print (word "Production:   " d-cost-r  " / " ([startup-cost] of defender))
   output-print (word "Power:        " d-power-r " / " ([startup-power] of defender))
   output-print (word "HP:           " d-hp-r    " / " ([startup-hp]    of defender))
