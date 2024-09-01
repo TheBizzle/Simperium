@@ -1756,6 +1756,10 @@ end
 to output [x]
   if not false [ output-print x ]
 end
+
+to std-plot [x]
+  if not false [ plot x ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 10
@@ -2278,8 +2282,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot sum [power] of [my-remaining-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot sum [power] of [my-remaining-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "std-plot sum [power] of [my-remaining-units] of attacker"
+"defender" 1.0 0 -13345367 true "" "std-plot sum [power] of [my-remaining-units] of defender"
 
 PLOT
 910
@@ -2297,8 +2301,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot sum [hp] of [my-remaining-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot sum [hp] of [my-remaining-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "std-plot sum [hp] of [my-remaining-units] of attacker"
+"defender" 1.0 0 -13345367 true "" "std-plot sum [hp] of [my-remaining-units] of defender"
 
 PLOT
 545
@@ -2316,8 +2320,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot [total-value] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot [total-value] of defender"
+"attacker" 1.0 0 -2674135 true "" "std-plot [total-value] of attacker"
+"defender" 1.0 0 -13345367 true "" "std-plot [total-value] of defender"
 
 PLOT
 910
@@ -2335,8 +2339,8 @@ true
 false
 "" ""
 PENS
-"attacker" 1.0 0 -2674135 true "" "plot count [my-remaining-units] of attacker"
-"defender" 1.0 0 -13345367 true "" "plot count [my-remaining-units] of defender"
+"attacker" 1.0 0 -2674135 true "" "std-plot count [my-remaining-units] of attacker"
+"defender" 1.0 0 -13345367 true "" "std-plot count [my-remaining-units] of defender"
 
 OUTPUT
 545
