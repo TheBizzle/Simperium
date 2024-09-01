@@ -1772,12 +1772,12 @@ to-report outcome
   ifelse (attacker != 0) [
 
     if ([defeated?] of defender and system-has-planet? and (not any? [my-infantry] of attacker)) [
-      report "Weird attack"
+      report "Stalemate"
     ]
 
     ifelse ([defeated?] of defender) [
       ifelse ([defeated?] of attacker) [
-        report "Stalemate"
+        report "Draw"
       ] [
         report "Successful attack"
       ]
@@ -1958,9 +1958,9 @@ to-report process-outcomes [outcomes]
   foreach outcomes [
     o ->
       ifelse (o = "Successful attack")  [ (run inc 0) ] [
-      ifelse (o = "Weird attack")       [ (run inc 1) ] [
+      ifelse (o = "Stalemate")          [ (run inc 1) ] [
       ifelse (o = "Successful defense") [ (run inc 2) ] [
-      ifelse (o = "Stalemate")          [ (run inc 3) ]
+      ifelse (o = "Draw")               [ (run inc 3) ]
                                         [ (run inc 4) ]
           ]
         ]
@@ -1972,7 +1972,7 @@ to-report process-outcomes [outcomes]
   let stringify            ([ [i labl] -> if ((item i counted-outcomes) > 0) [ set stringified-outcomes (replace-item i stringified-outcomes (word labl ": " (100 * (item i counted-outcomes) / num) "%")) ] ])
 
   (run stringify 0 "ATTACKER")
-  (run stringify 1 "WEIRD")
+  (run stringify 1 "STALEMATE")
   (run stringify 2 "DEFENDER")
   (run stringify 3 "DRAW")
   (run stringify 4 "OTHER")
