@@ -1,4 +1,14 @@
-globals [attacker defender game-state after-first-invasion-round?]
+globals [
+
+  attacker
+  defender
+
+  after-first-invasion-round?
+  bizzlespace-data
+  bizzlespace-run-num
+  game-state
+
+]
 
 breed [players player]
 breed [units unit]
@@ -12,6 +22,9 @@ players-own [
   my-local-pds
   my-units
   startup-cost
+  startup-count
+  startup-hp
+  startup-power
   trade-goods
   until-retreat
 ]
@@ -26,9 +39,18 @@ units-own [
   upgraded?
 ]
 
+to startup
+  set bizzlespace-run-num -1
+  set bizzlespace-data    initial-bizzlespace-data
+end
+
 to setup
 
+  let brn bizzlespace-run-num
+  let bd  bizzlespace-data
   clear-all
+  set bizzlespace-run-num brn
+  set bizzlespace-data    bd
 
   let h1 90
   let h2 270
@@ -102,6 +124,9 @@ to setup
   ask players [
     set defeated?     false
     set startup-cost  total-value
+    set startup-count total-count
+    set startup-hp    total-hp
+    set startup-power total-power
     set hidden?       true
   ]
 
@@ -1723,6 +1748,18 @@ to-report anti-fighter-units
   report (turtle-set my-destroyers)
 end
 
+to-report total-count
+  report count my-living-units
+end
+
+to-report total-hp
+  report sum [hp] of my-living-units
+end
+
+to-report total-power
+  report (precision (sum [power] of my-living-units) 2)
+end
+
 to-report total-value
   report sum [cost] of my-living-units
 end
@@ -1757,12 +1794,197 @@ to-report outcome
   ]
 end
 
+to-report batched?
+  report bizzlespace-run-num != -1
+end
+
 to output [x]
-  if not false [ output-print x ]
+  if not batched? [ output-print x ]
 end
 
 to std-plot [x]
-  if not false [ plot x ]
+  if not batched? [ plot x ]
+end
+
+to run-bizzlespace
+
+  let i 1
+
+  while [i <= 1000] [
+    set bizzlespace-run-num i
+    setup
+    while [game-state != "complete"] [
+      go
+    ]
+    record-bizzlespace-metrics
+    set i (i + 1)
+  ]
+
+  print-bizzlespace-metrics
+
+  set bizzlespace-run-num -1
+  set bizzlespace-data    initial-bizzlespace-data
+
+end
+
+to record-bizzlespace-metrics
+
+  let data bizzlespace-data
+
+  ; "a": Attacker
+  ; "d": Defender
+  ; "r": Retained
+  ; "l": Lost
+
+  append-bizzlespace-data  0 (ticks)
+  append-bizzlespace-data  1 (count          [my-living-units] of attacker)
+  append-bizzlespace-data  2 (sum [cost]  of [my-living-units] of attacker)
+  append-bizzlespace-data  3 ([production-lost]                of attacker)
+  append-bizzlespace-data  4 (sum [power] of [my-living-units] of attacker)
+  append-bizzlespace-data  5 (sum [hp]    of [my-living-units] of attacker)
+  append-bizzlespace-data  6 (count          [my-flagships]    of attacker)
+  append-bizzlespace-data  7 (count          [my-warsuns]      of attacker)
+  append-bizzlespace-data  8 (count          [my-dreadnoughts] of attacker)
+  append-bizzlespace-data  9 (count          [my-cruisers]     of attacker)
+  append-bizzlespace-data 10 (count          [my-destroyers]   of attacker)
+  append-bizzlespace-data 11 (count          [my-carriers]     of attacker)
+  append-bizzlespace-data 12 (count          [my-fighters]     of attacker)
+  append-bizzlespace-data 13 (count          [my-infantry]     of attacker)
+  append-bizzlespace-data 14 (count          [my-living-units] of defender)
+  append-bizzlespace-data 15 (sum [cost]  of [my-living-units] of defender)
+  append-bizzlespace-data 16 ([production-lost]                of defender)
+  append-bizzlespace-data 17 (sum [power] of [my-living-units] of defender)
+  append-bizzlespace-data 18 (sum [hp]    of [my-living-units] of defender)
+  append-bizzlespace-data 19 (count          [my-flagships]    of defender)
+  append-bizzlespace-data 20 (count          [my-warsuns]      of defender)
+  append-bizzlespace-data 21 (count          [my-dreadnoughts] of defender)
+  append-bizzlespace-data 22 (count          [my-cruisers]     of defender)
+  append-bizzlespace-data 23 (count          [my-destroyers]   of defender)
+  append-bizzlespace-data 24 (count          [my-carriers]     of defender)
+  append-bizzlespace-data 25 (count          [my-fighters]     of defender)
+  append-bizzlespace-data 26 (count          [my-infantry]     of defender)
+  append-bizzlespace-data 27 (count          [my-pds]          of defender)
+  append-bizzlespace-data 28 (outcome)
+
+end
+
+to append-bizzlespace-data [i x]
+  let data             bizzlespace-data
+  set bizzlespace-data (replace-item i data (lput x (item i data)))
+end
+
+to print-bizzlespace-metrics
+
+  let data bizzlespace-data
+
+  let process ([d -> (precision ((sum d) / (length d)) 2)])
+
+  let steps     (run-result process (item  0 data))
+  let a-count-r (run-result process (item  1 data))
+  let a-cost-r  (run-result process (item  2 data))
+  let a-cost-l  (run-result process (item  3 data))
+  let a-power-r (run-result process (item  4 data))
+  let a-hp-r    (run-result process (item  5 data))
+  let a-fs-r    (run-result process (item  6 data))
+  let a-ws-r    (run-result process (item  7 data))
+  let a-dr-r    (run-result process (item  8 data))
+  let a-cu-r    (run-result process (item  9 data))
+  let a-de-r    (run-result process (item 10 data))
+  let a-ca-r    (run-result process (item 11 data))
+  let a-fi-r    (run-result process (item 12 data))
+  let a-in-r    (run-result process (item 13 data))
+  let d-count-r (run-result process (item 14 data))
+  let d-cost-r  (run-result process (item 15 data))
+  let d-cost-l  (run-result process (item 16 data))
+  let d-power-r (run-result process (item 17 data))
+  let d-hp-r    (run-result process (item 18 data))
+  let d-fs-r    (run-result process (item 19 data))
+  let d-ws-r    (run-result process (item 20 data))
+  let d-dr-r    (run-result process (item 21 data))
+  let d-cu-r    (run-result process (item 22 data))
+  let d-de-r    (run-result process (item 23 data))
+  let d-ca-r    (run-result process (item 24 data))
+  let d-fi-r    (run-result process (item 25 data))
+  let d-in-r    (run-result process (item 26 data))
+  let d-pd-r    (run-result process (item 27 data))
+  let outcomes  (process-outcomes   (item 28 data))
+
+  output-print "==== BIZZLESPACE RESULTS ===="
+
+  output-print "\n== ATTACKER ==\n"
+
+  output-print (word "Ships:        " a-count-r " / " ([startup-count] of attacker))
+  output-print (word "Production:   " a-cost-r  " / " ([startup-cost]  of attacker))
+  output-print (word "Power:        " a-power-r " / " ([startup-power] of attacker))
+  output-print (word "HP:           " a-hp-r    " / " ([startup-hp]    of attacker))
+  output-print (word "Flagships:    " a-fs-r    " / " flagships-1)
+  output-print (word "Warsuns:      " a-ws-r    " / " warsuns-1)
+  output-print (word "Dreadnoughts: " a-dr-r    " / " dreadnoughts-1)
+  output-print (word "Cruisers:     " a-cu-r    " / " cruisers-1)
+  output-print (word "Destroyers:   " a-de-r    " / " destroyers-1)
+  output-print (word "Carriers:     " a-ca-r    " / " carriers-1)
+  output-print (word "Fighters:     " a-fi-r    " / " fighters-1)
+  output-print (word "Infantry:     " a-in-r    " / " infantry-1)
+
+  output-print "\n\n== DEFENDER ==\n"
+
+  output-print (word "Ships:        " d-count-r " / " ([startup-count] of defender))
+  output-print (word "Production:   " d-cost-r  " / " ([startup-cost] of defender))
+  output-print (word "Power:        " d-power-r " / " ([startup-power] of defender))
+  output-print (word "HP:           " d-hp-r    " / " ([startup-hp]    of defender))
+  output-print (word "Flagships:    " d-fs-r    " / " flagships-2)
+  output-print (word "Warsuns:      " d-ws-r    " / " warsuns-2)
+  output-print (word "Dreadnoughts: " d-dr-r    " / " dreadnoughts-2)
+  output-print (word "Cruisers:     " d-cu-r    " / " cruisers-2)
+  output-print (word "Destroyers:   " d-de-r    " / " destroyers-2)
+  output-print (word "Carriers:     " d-ca-r    " / " carriers-2)
+  output-print (word "Fighters:     " d-fi-r    " / " fighters-2)
+  output-print (word "Infantry:     " d-in-r    " / " infantry-2)
+  output-print (word "PDS:          " d-pd-r    " / " pds-2)
+
+  output-print "\n== SUMMARY ==\n"
+
+  output-print (word "Steps:              " steps)
+  output-print (word "Attacker Prod Loss: " a-cost-l)
+  output-print (word "Defender Prod Loss: " d-cost-l)
+  output-print (word "Favorability:       " (precision (d-cost-l - a-cost-l) 2))
+  output-print (word "Outcomes:           " outcomes)
+
+end
+
+to-report process-outcomes [outcomes]
+
+  let counted-outcomes [0 0 0 0 0]
+  let inc              ([ i -> set counted-outcomes (replace-item i counted-outcomes ((item i counted-outcomes) + 1)) ])
+
+  foreach outcomes [
+    o ->
+      ifelse (o = "Successful attack")  [ (run inc 0) ] [
+      ifelse (o = "Weird attack")       [ (run inc 1) ] [
+      ifelse (o = "Successful defense") [ (run inc 2) ] [
+      ifelse (o = "Stalemate")          [ (run inc 3) ]
+                                        [ (run inc 4) ]
+          ]
+        ]
+      ]
+  ]
+
+  let num                  (length outcomes)
+  let stringified-outcomes ["" "" "" "" ""]
+  let stringify            ([ [i labl] -> if ((item i counted-outcomes) > 0) [ set stringified-outcomes (replace-item i stringified-outcomes (word labl ": " (100 * (item i counted-outcomes) / num) "%")) ] ])
+
+  (run stringify 0 "ATTACKER")
+  (run stringify 1 "WEIRD")
+  (run stringify 2 "DEFENDER")
+  (run stringify 3 "DRAW")
+  (run stringify 4 "OTHER")
+
+  report (reduce [ [x y] -> ifelse-value (y != "") [ (word x ", " y) ] [ x ] ] stringified-outcomes)
+
+end
+
+to-report initial-bizzlespace-data
+  report n-values 29 [ -> [] ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -2813,6 +3035,34 @@ rounds-until-retreat-1
 1
 NIL
 HORIZONTAL
+
+BUTTON
+1290
+1232
+1490
+1325
+BizzleSpace
+run-bizzlespace
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+MONITOR
+1495
+1243
+1720
+1317
+Bizzlespace Progress
+ifelse-value (bizzlespace-run-num = -1) [ \"N/A\" ] [ (word bizzlespace-run-num \" / 1000\") ]
+17
+1
+18
 
 @#$#@#$#@
 ## WHAT IS IT?
